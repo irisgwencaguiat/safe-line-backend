@@ -34,6 +34,7 @@ class CreateUser extends FormRequest
             "gender" => "required|string",
             "birthday" => "required",
             "contacts" => "required|string",
+            "address_type" => "required|string",
             "street" => "required|string",
             "city" => "required|string",
             "region" => "required|string",
