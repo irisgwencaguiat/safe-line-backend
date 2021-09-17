@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClinicServicesTable extends Migration
+class AddClinicOwnerColumnToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateClinicServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create("clinic_services", function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string("name");
-            $table->string("slug");
+        Schema::table("users", function (Blueprint $table) {
+            $table->boolean("has_clinic")->default(false);
         });
     }
 
@@ -28,6 +25,8 @@ class CreateClinicServicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("clinic_services");
+        Schema::table("users", function (Blueprint $table) {
+            $table->dropColumn("has_clinic");
+        });
     }
 }

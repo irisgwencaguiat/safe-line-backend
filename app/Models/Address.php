@@ -10,7 +10,6 @@ class Address extends Model
     use HasFactory;
 
     protected $fillable = [
-        "type",
         "street",
         "city",
         "region",
@@ -21,5 +20,10 @@ class Address extends Model
     public function profile()
     {
         return $this->belongsTo(Profile::class);
+    }
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Clinic;
 
-use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
+use App\Exceptions\ValidationException;
 use Illuminate\Foundation\Http\FormRequest;
 
-class Login extends FormRequest
+class CreateClinic extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,11 +26,17 @@ class Login extends FormRequest
     public function rules()
     {
         return [
-            "email" => "required|string",
-            "password" => "required|string",
+            "name" => "required|string|unique:clinics",
+            "opening_time" => "required",
+            "closing_time" => "required",
+            "services" => "required|array|min:1",
+            "services.*" => "required|integer",
+            "street" => "required|string",
+            "city" => "required|string",
+            "region" => "required|string",
+            "zip_code" => "required|string",
         ];
     }
-
     /**
      * @throws ValidationException
      */

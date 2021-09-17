@@ -44,7 +44,6 @@ class AuthenticationController extends Controller
         ]);
 
         Address::create([
-            "type" => $request->input("address_type"),
             "street" => $request->input("street"),
             "city" => $request->input("city"),
             "region" => $request->input("region"),

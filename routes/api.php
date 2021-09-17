@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthenticationController;
+use App\Http\Controllers\api\ClinicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('auth')->group(function () {
-    Route::post('/signup', [AuthenticationController::class, 'signup']);
-    Route::post('/login', [AuthenticationController::class, 'login']);
+Route::prefix("auth")->group(function () {
+    Route::post("/signup", [AuthenticationController::class, "signup"]);
+    Route::post("/login", [AuthenticationController::class, "login"]);
 });
+
+Route::middleware("auth:api")
+    ->prefix("clinic")
+    ->group(function () {
+        Route::post("/", [ClinicController::class, "signup"]);
+    });

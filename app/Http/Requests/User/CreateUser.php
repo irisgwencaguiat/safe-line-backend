@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\User;
 
+use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CreateUser extends FormRequest
 {
@@ -34,7 +34,6 @@ class CreateUser extends FormRequest
             "gender" => "required|string",
             "birthday" => "required",
             "contacts" => "required|string",
-            "address_type" => "required|string",
             "street" => "required|string",
             "city" => "required|string",
             "region" => "required|string",
@@ -43,15 +42,13 @@ class CreateUser extends FormRequest
         ];
     }
 
+    /**
+     * @throws ValidationException
+     */
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(
-            customResponse()
-                ->data([])
-                ->message($validator->errors()->first())
-                ->failed()
-                ->generate(),
-            422
-        );
+        throw new ValidationException($validator);
     }
+
+    protected $stopOnFirstFailure = true;
 }

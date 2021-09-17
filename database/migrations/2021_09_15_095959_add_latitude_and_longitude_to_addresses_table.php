@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddClinicTypeToAddressesTable extends Migration
+class AddLatitudeAndLongitudeToAddressesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,14 +14,8 @@ class AddClinicTypeToAddressesTable extends Migration
     public function up()
     {
         Schema::table("addresses", function (Blueprint $table) {
-            $table
-                ->integer("clinic_id")
-                ->unsigned()
-                ->nullable();
-            $table
-                ->foreign("clinic_id")
-                ->references("id")
-                ->on("clinics");
+            $table->string("latitude");
+            $table->string("longitude");
         });
     }
 
@@ -33,8 +27,8 @@ class AddClinicTypeToAddressesTable extends Migration
     public function down()
     {
         Schema::table("addresses", function (Blueprint $table) {
-            $table->dropForeign(["clinic_id"]);
-            $table->dropColumn("clinic_id");
+            $table->dropColumn("latitude");
+            $table->dropColumn("longitude");
         });
     }
 }
