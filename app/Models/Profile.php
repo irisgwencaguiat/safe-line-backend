@@ -23,9 +23,9 @@ class Profile extends Model
         return $this->hasMany(Contact::class);
     }
 
-    public function address()
+    public function location()
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Location::class);
     }
 
     public function user()

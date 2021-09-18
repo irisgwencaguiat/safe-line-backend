@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUser;
 use App\Http\Requests\User\Login;
-use App\Models\Address;
+use App\Models\Location;
 use App\Models\Contact;
 use App\Models\Profile;
 use App\Models\User;
@@ -46,11 +46,8 @@ class AuthenticationController extends Controller
         }
         $profile = Profile::create($newProfile);
 
-        Address::create([
-            "street" => $request->input("street"),
-            "city" => $request->input("city"),
-            "region" => $request->input("region"),
-            "zip_code" => $request->input("zip_code"),
+        Location::create([
+            "address" => $request->input("address"),
             "latitude" => $request->input("latitude"),
             "longitude" => $request->input("longitude"),
             "profile_id" => $profile->id,
@@ -78,10 +75,10 @@ class AuthenticationController extends Controller
                 ->generate();
         }
         $user->profile = $user->profile()->get()[0];
-        $user->profile->address = $user
+        $user->profile->location = $user
             ->profile()
             ->get()[0]
-            ->address()
+            ->location()
             ->get();
         $user->profile->contacts = $user
             ->profile()

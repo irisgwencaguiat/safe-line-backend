@@ -26,8 +26,8 @@ class Clinic extends Model
         return $this->hasMany(ClinicService::class);
     }
 
-    public function address()
+    public function location()
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Location::class);
     }
 }
