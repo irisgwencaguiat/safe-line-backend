@@ -48,6 +48,8 @@ class AuthenticationController extends Controller
             "city" => $request->input("city"),
             "region" => $request->input("region"),
             "zip_code" => $request->input("zip_code"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
             "profile_id" => $profile->id,
         ]);
 

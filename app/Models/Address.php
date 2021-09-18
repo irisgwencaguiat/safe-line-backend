@@ -14,7 +14,10 @@ class Address extends Model
         "city",
         "region",
         "zip_code",
+        "latitude",
+        "longitude",
         "profile_id",
+        "clinic_id",
     ];
 
     public function profile()

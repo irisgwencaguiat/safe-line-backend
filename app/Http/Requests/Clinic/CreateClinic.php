@@ -35,6 +35,8 @@ class CreateClinic extends FormRequest
             "city" => "required|string",
             "region" => "required|string",
             "zip_code" => "required|string",
+            "latitude" => "required|string",
+            "longitude" => "required|string",
         ];
     }
     /**

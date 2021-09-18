@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clinic\CreateClinic;
+use App\Models\Address;
 use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\ClinicService;
@@ -22,6 +23,15 @@ class ClinicController extends Controller
 
         User::where("id", Auth::id())->update(["has_clinic" => true]);
 
+        Address::create([
+            "street" => $request->input("street"),
+            "city" => $request->input("city"),
+            "region" => $request->input("region"),
+            "zip_code" => $request->input("zip_code"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+            "clinic_id" => $clinic->id,
+        ]);
         ClinicMember::create([
             "member_type" => "admin",
             "clinic_id" => $clinic->id,
@@ -34,6 +44,7 @@ class ClinicController extends Controller
                 "service_id" => $service,
             ]);
         }
+        $clinic->address = $clinic->address()->get()[0];
         $members = [];
         $clinicMembers = $clinic->clinicMembers()->get();
         foreach ($clinicMembers as $clinicMember) {
