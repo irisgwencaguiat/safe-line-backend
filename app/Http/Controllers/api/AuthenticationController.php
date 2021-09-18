@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUser;
 use App\Http\Requests\User\Login;
 use App\Models\Address;
-use App\Models\CoinUrl;
 use App\Models\Contact;
 use App\Models\Profile;
 use App\Models\User;
@@ -34,14 +33,18 @@ class AuthenticationController extends Controller
         if (!$request->input("contacts")) {
             $contacts = [];
         }
-        $profile = Profile::create([
+        $newProfile = [
             "first_name" => $request->input("first_name"),
             "last_name" => $request->input("last_name"),
             "gender" => $request->input("gender"),
             "birthday" => $request->input("birthday"),
             "image_url" => $path,
             "user_id" => $user->id,
-        ]);
+        ];
+        if ($path === null) {
+            unset($newProfile["image_url"]);
+        }
+        $profile = Profile::create($newProfile);
 
         Address::create([
             "street" => $request->input("street"),
