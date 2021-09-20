@@ -9,12 +9,7 @@ class Clinic extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        "name",
-        "opening_time",
-        "closing_time",
-        "is_verified",
-    ];
+    protected $fillable = ["name", "opening_time", "closing_time", "status"];
 
     public function clinicMembers()
     {
