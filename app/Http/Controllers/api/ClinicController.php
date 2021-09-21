@@ -5,11 +5,14 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clinic\CreateClinic;
 use App\Http\Requests\Clinic\UpdateClinicStatus;
+use App\Http\Requests\Clinic\UploadClinicFiles;
+use App\Models\ClinicFile;
 use App\Models\Location;
 use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\ClinicService;
 use App\Models\User;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +21,7 @@ class ClinicController extends Controller
     public function getClinicRelationships($clinic)
     {
         $clinic->location = $clinic->location()->get()[0];
+
         $members = [];
         $clinicMembers = $clinic->clinicMembers()->get();
         foreach ($clinicMembers as $clinicMember) {
@@ -27,6 +31,7 @@ class ClinicController extends Controller
         }
         $clinic->members = [];
         $clinic->members = array_merge($clinic->members, $members);
+
         $services = [];
         $clinicServices = $clinic->clinicServices()->get();
         foreach ($clinicServices as $clinicService) {
@@ -36,6 +41,9 @@ class ClinicController extends Controller
         }
         $clinic->services = [];
         $clinic->services = array_merge($clinic->services, $services);
+
+        $clinic->files = $clinic->clinicFiles()->get();
+
         return $clinic;
     }
 
@@ -104,11 +112,35 @@ class ClinicController extends Controller
 
     public function updateClinicStatus(UpdateClinicStatus $request)
     {
-        Clinic::where("id", $request->input("id"))->update([
+        Clinic::where("id", $request->input("clinic_id"))->update([
             "status" => $request->input("status"),
         ]);
 
-        $clinic = Clinic::find($request->input("id"));
+        $clinic = Clinic::find($request->input("clinic_id"));
+
+        return customResponse()
+            ->data($this->getClinicRelationships($clinic))
+            ->message("You have successfully signed up.")
+            ->success()
+            ->generate();
+    }
+
+    public function uploadClinicFiles(UploadClinicFiles $request)
+    {
+        $clinicId = $request->input("clinic_id");
+        $files = $request->file("files");
+        foreach ($files as $file) {
+            $path = Cloudinary::uploadFile($file->getRealPath(), [
+                "folder" => "safe-line/clinic/file",
+            ])->getSecurePath();
+
+            ClinicFile::create([
+                "clinic_id" => $clinicId,
+                "file_url" => $path,
+            ]);
+        }
+
+        $clinic = Clinic::find($clinicId);
 
         return customResponse()
             ->data($this->getClinicRelationships($clinic))

@@ -6,7 +6,7 @@ use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateClinicStatus extends FormRequest
+class UploadClinicFiles extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,9 +27,11 @@ class UpdateClinicStatus extends FormRequest
     {
         return [
             "clinic_id" => "required|integer",
-            "status" => "required|string",
+            "files" => "required|array|min:1",
+            "files.*" => "required|file",
         ];
     }
+
     /**
      * @throws ValidationException
      */
