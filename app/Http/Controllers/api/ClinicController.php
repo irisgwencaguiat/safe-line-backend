@@ -15,18 +15,25 @@ use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ClinicController extends Controller
 {
     public function getClinicRelationships($clinic)
     {
-        $clinic->location = $clinic->location()->get()[0];
+        $clinic->location = $clinic
+            ->location()
+            ->get()
+            ->first();
 
         $members = [];
         $clinicMembers = $clinic->clinicMembers()->get();
         foreach ($clinicMembers as $clinicMember) {
             $member = $clinicMember;
-            $member->user = $member->user()->get()[0];
+            $member->user = $member
+                ->user()
+                ->get()
+                ->first();
             array_push($members, $member);
         }
         $clinic->members = [];
@@ -36,7 +43,10 @@ class ClinicController extends Controller
         $clinicServices = $clinic->clinicServices()->get();
         foreach ($clinicServices as $clinicService) {
             $service = $clinicService;
-            $service->service = $service->service()->get()[0];
+            $service->service = $service
+                ->service()
+                ->get()
+                ->first();
             array_push($services, $service);
         }
         $clinic->services = [];
@@ -51,6 +61,7 @@ class ClinicController extends Controller
     {
         $clinic = Clinic::create([
             "name" => $request->input("name"),
+            "slug" => Str::slug($request->input("name"), "_"),
             "opening_time" => $request->input("opening_time"),
             "closing_time" => $request->input("closing_time"),
         ]);
@@ -83,17 +94,41 @@ class ClinicController extends Controller
             ->generate();
     }
 
-    public function getClinics()
+    public function getClinics(Request $request)
     {
-        $clinics = Clinic::all();
-        $newClinic = [];
+        $clinics = new Clinic();
+        $clinics = $clinics->with(["location"]);
+
+        if ($request->has("search")) {
+            $search = "%" . $request->get("search") . "%";
+
+            $clinics = $clinics
+                ->where("slug", "LIKE", $search)
+                ->orWhereHas("location", function ($query) use ($search) {
+                    $query->where("address", "LIKE", $search);
+                })
+                ->orWhereHas("clinicServices", function ($query) use ($search) {
+                    $query->whereHas("service", function ($query) use (
+                        $search
+                    ) {
+                        $query->where("slug", "LIKE", $search);
+                    });
+                });
+        }
+
+        $clinics = $clinics->paginate(
+            $request->get("per_page", 10),
+            ["*"],
+            "page",
+            $request->get("page", 1)
+        );
 
         foreach ($clinics as $clinic) {
-            array_push($newClinic, $this->getClinicRelationships($clinic));
+            $this->getClinicRelationships($clinic);
         }
 
         return customResponse()
-            ->data($newClinic)
+            ->data($clinics)
             ->message("You have successfully signed up.")
             ->success()
             ->generate();
