@@ -9,6 +9,13 @@ class Clinic extends Model
 {
     use HasFactory;
 
+    public $with = [
+        "location",
+        "clinicMembers",
+        "clinicServices",
+        "clinicFiles",
+    ];
+
     protected $fillable = [
         "name",
         "slug",

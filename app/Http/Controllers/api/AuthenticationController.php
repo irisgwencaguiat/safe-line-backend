@@ -74,21 +74,11 @@ class AuthenticationController extends Controller
                 ->unathorized()
                 ->generate();
         }
-        $user->profile = $user->profile()->get()[0];
-        $user->profile->location = $user
-            ->profile()
-            ->get()[0]
-            ->location()
-            ->get();
-        $user->profile->contacts = $user
-            ->profile()
-            ->get()[0]
-            ->contacts()
-            ->get();
+
         $accessToken = Auth::user()->createToken("authToken")->accessToken;
         return customResponse()
             ->data([
-                "user" => $user,
+                "user" => User::find($user->id)->get(),
                 "access_token" => $accessToken,
             ])
             ->message("You have successfully signed up.")
@@ -111,21 +101,10 @@ class AuthenticationController extends Controller
                 ->generate();
         }
         $accessToken = Auth::user()->createToken("authToken")->accessToken;
-        $user = User::where("id", Auth::user()->id)->get()[0];
-        $user->profile = $user->profile()->get()[0];
-        $user->profile->address = $user
-            ->profile()
-            ->get()[0]
-            ->address()
-            ->get();
-        $user->profile->contacts = $user
-            ->profile()
-            ->get()[0]
-            ->contacts()
-            ->get();
+
         return customResponse()
             ->data([
-                "user" => $user,
+                "user" => User::find(Auth::id())->get(),
                 "access_token" => $accessToken,
             ])
             ->message("You have successfully logged in.")

@@ -9,6 +9,8 @@ class ClinicService extends Model
 {
     use HasFactory;
 
+    public $with = ["service"];
+
     protected $fillable = ["clinic_id", "service_id"];
 
     public function clinic()

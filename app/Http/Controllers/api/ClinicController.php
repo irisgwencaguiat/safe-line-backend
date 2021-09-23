@@ -19,44 +19,6 @@ use Illuminate\Support\Str;
 
 class ClinicController extends Controller
 {
-    public function getClinicRelationships($clinic)
-    {
-        $clinic->location = $clinic
-            ->location()
-            ->get()
-            ->first();
-
-        $members = [];
-        $clinicMembers = $clinic->clinicMembers()->get();
-        foreach ($clinicMembers as $clinicMember) {
-            $member = $clinicMember;
-            $member->user = $member
-                ->user()
-                ->get()
-                ->first();
-            array_push($members, $member);
-        }
-        $clinic->members = [];
-        $clinic->members = array_merge($clinic->members, $members);
-
-        $services = [];
-        $clinicServices = $clinic->clinicServices()->get();
-        foreach ($clinicServices as $clinicService) {
-            $service = $clinicService;
-            $service->service = $service
-                ->service()
-                ->get()
-                ->first();
-            array_push($services, $service);
-        }
-        $clinic->services = [];
-        $clinic->services = array_merge($clinic->services, $services);
-
-        $clinic->files = $clinic->clinicFiles()->get();
-
-        return $clinic;
-    }
-
     public function signup(CreateClinic $request)
     {
         $clinic = Clinic::create([
@@ -88,7 +50,7 @@ class ClinicController extends Controller
         }
 
         return customResponse()
-            ->data($this->getClinicRelationships($clinic))
+            ->data(Clinic::find($clinic->id)->get())
             ->message("You have successfully signed up.")
             ->success()
             ->generate();
@@ -97,7 +59,6 @@ class ClinicController extends Controller
     public function getClinics(Request $request)
     {
         $clinics = new Clinic();
-        $clinics = $clinics->with(["location"]);
 
         if ($request->has("search")) {
             $search = "%" . $request->get("search") . "%";
@@ -123,10 +84,6 @@ class ClinicController extends Controller
             $request->get("page", 1)
         );
 
-        foreach ($clinics as $clinic) {
-            $this->getClinicRelationships($clinic);
-        }
-
         return customResponse()
             ->data($clinics)
             ->message("You have successfully signed up.")
@@ -139,7 +96,7 @@ class ClinicController extends Controller
         $clinic = Clinic::find((int) $id);
 
         return customResponse()
-            ->data($this->getClinicRelationships($clinic))
+            ->data($clinic)
             ->message("You have successfully signed up.")
             ->success()
             ->generate();
@@ -154,7 +111,7 @@ class ClinicController extends Controller
         $clinic = Clinic::find($request->input("clinic_id"));
 
         return customResponse()
-            ->data($this->getClinicRelationships($clinic))
+            ->data($clinic)
             ->message("You have successfully signed up.")
             ->success()
             ->generate();
@@ -178,7 +135,7 @@ class ClinicController extends Controller
         $clinic = Clinic::find($clinicId);
 
         return customResponse()
-            ->data($this->getClinicRelationships($clinic))
+            ->data($clinic)
             ->message("You have successfully signed up.")
             ->success()
             ->generate();

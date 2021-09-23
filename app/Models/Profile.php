@@ -9,6 +9,8 @@ class Profile extends Model
 {
     use HasFactory;
 
+    public $with = ["contacts", "location"];
+
     protected $fillable = [
         "first_name",
         "last_name",

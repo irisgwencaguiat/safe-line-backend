@@ -9,6 +9,8 @@ class ClinicMember extends Model
 {
     use HasFactory;
 
+    public $with = ["user"];
+
     protected $fillable = ["member_type", "clinic_id", "user_id"];
 
     public function clinic()
