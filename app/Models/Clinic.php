@@ -22,6 +22,7 @@ class Clinic extends Model
         "opening_time",
         "closing_time",
         "status",
+        "user_id",
     ];
 
     public function clinicMembers()

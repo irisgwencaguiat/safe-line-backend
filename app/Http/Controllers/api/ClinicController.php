@@ -4,13 +4,16 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clinic\CreateClinic;
+use App\Http\Requests\Clinic\CreateClinicMember;
 use App\Http\Requests\Clinic\UpdateClinicStatus;
 use App\Http\Requests\Clinic\UploadClinicFiles;
 use App\Models\ClinicFile;
+use App\Models\Contact;
 use App\Models\Location;
 use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\ClinicService;
+use App\Models\Profile;
 use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
@@ -26,20 +29,18 @@ class ClinicController extends Controller
             "slug" => Str::slug($request->input("name"), "_"),
             "opening_time" => $request->input("opening_time"),
             "closing_time" => $request->input("closing_time"),
+            "user_id" => Auth::id(),
         ]);
 
-        User::where("id", Auth::id())->update(["has_clinic" => true]);
+        User::where("id", Auth::id())->update([
+            "has_clinic" => true,
+        ]);
 
         Location::create([
             "address" => $request->input("address"),
             "latitude" => $request->input("latitude"),
             "longitude" => $request->input("longitude"),
             "clinic_id" => $clinic->id,
-        ]);
-        ClinicMember::create([
-            "member_type" => "admin",
-            "clinic_id" => $clinic->id,
-            "user_id" => Auth::id(),
         ]);
 
         foreach ($request->input("services") as $service) {
@@ -50,8 +51,12 @@ class ClinicController extends Controller
         }
 
         return customResponse()
-            ->data(Clinic::find($clinic->id)->get())
-            ->message("You have successfully signed up.")
+            ->data(
+                Clinic::where("id", $clinic->id)
+                    ->get()
+                    ->first()
+            )
+            ->message("Clinic has been successfully created.")
             ->success()
             ->generate();
     }
@@ -86,33 +91,52 @@ class ClinicController extends Controller
 
         return customResponse()
             ->data($clinics)
-            ->message("You have successfully signed up.")
+            ->message("Getting clinics is successful.")
             ->success()
             ->generate();
     }
 
     public function getClinic($id)
     {
-        $clinic = Clinic::find((int) $id);
+        $clinic = Clinic::where("id", (int) $id)
+            ->get()
+            ->first();
 
         return customResponse()
             ->data($clinic)
-            ->message("You have successfully signed up.")
+            ->message("Getting clinic is successful.")
             ->success()
             ->generate();
     }
 
     public function updateClinicStatus(UpdateClinicStatus $request)
     {
+        $userId = Clinic::where("id", $request->input("clinic_id"))
+            ->pluck("user_id")
+            ->first();
+
+        if ($request->input("status") == "approved") {
+            ClinicMember::create([
+                "member_type" => "admin",
+                "clinic_id" => $request->input("clinic_id"),
+                "user_id" => $userId,
+            ]);
+        }
+
+        User::where("id", $userId)->update([
+            "user_type" => "clinic_member",
+        ]);
+
         Clinic::where("id", $request->input("clinic_id"))->update([
             "status" => $request->input("status"),
         ]);
-
-        $clinic = Clinic::find($request->input("clinic_id"));
+        $clinic = Clinic::where("id", $request->input("clinic_id"))
+            ->get()
+            ->first();
 
         return customResponse()
             ->data($clinic)
-            ->message("You have successfully signed up.")
+            ->message("Clinic status has been updated.")
             ->success()
             ->generate();
     }
@@ -132,11 +156,88 @@ class ClinicController extends Controller
             ]);
         }
 
-        $clinic = Clinic::find($clinicId);
+        $clinic = Clinic::where("id", $clinicId)
+            ->get()
+            ->first();
 
         return customResponse()
             ->data($clinic)
-            ->message("You have successfully signed up.")
+            ->message("Clinic files uploaded successfully.")
+            ->success()
+            ->generate();
+    }
+
+    public function createClinicMember(CreateClinicMember $request)
+    {
+        $clinic = Clinic::where("id", $request->input("clinic_id"))
+            ->get()
+            ->first();
+        if ($clinic->status == "pending" || $clinic->status == "rejected") {
+            return customResponse()
+                ->data([])
+                ->message("Invalid credentials.")
+                ->unathorized()
+                ->generate();
+        }
+
+        $path = $request->file("image")
+            ? Cloudinary::upload($request->file("image")->getRealPath(), [
+                "folder" => "safe-line/profile",
+            ])->getSecurePath()
+            : null;
+
+        $user = User::create([
+            "email" => $request->input("email"),
+            "password" => bcrypt($request->input("password")),
+            "user_type" => "clinic_member",
+        ]);
+
+        $contacts = explode(",", $request->input("contacts"));
+        if (!$request->input("contacts")) {
+            $contacts = [];
+        }
+        $newProfile = [
+            "first_name" => $request->input("first_name"),
+            "last_name" => $request->input("last_name"),
+            "gender" => $request->input("gender"),
+            "birthday" => $request->input("birthday"),
+            "image_url" => $path,
+            "user_id" => $user->id,
+        ];
+        if ($path === null) {
+            unset($newProfile["image_url"]);
+        }
+        $profile = Profile::create($newProfile);
+
+        Location::create([
+            "address" => $request->input("address"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+            "profile_id" => $profile->id,
+        ]);
+
+        foreach ($contacts as $contact) {
+            $newContact = explode(":", $contact);
+            Contact::create([
+                "name" => $newContact[0],
+                "contact" => $newContact[1],
+                "profile_id" => $profile->id,
+            ]);
+        }
+
+        ClinicMember::create([
+            "member_type" => $request->input("member_type"),
+            "clinic_id" => $request->input("clinic_id"),
+            "user_id" => $user->id,
+        ]);
+
+        return customResponse()
+            ->data(
+                User::where("id", $user->id)
+                    ->get()
+                    ->first()
+            )
+            ->message("Clinic member is successfully created.")
             ->success()
             ->generate();
     }

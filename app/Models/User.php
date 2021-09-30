@@ -40,4 +40,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
+
+    public function clinicMember()
+    {
+        return $this->hasOne(ClinicMember::class);
+    }
 }

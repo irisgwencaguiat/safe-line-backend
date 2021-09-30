@@ -26,7 +26,7 @@ class AuthenticationController extends Controller
         $user = User::create([
             "email" => $request->input("email"),
             "password" => bcrypt($request->input("password")),
-            "user_type" => $request->input("user_type"),
+            "user_type" => "patient",
         ]);
 
         $contacts = explode(",", $request->input("contacts"));
@@ -78,7 +78,9 @@ class AuthenticationController extends Controller
         $accessToken = Auth::user()->createToken("authToken")->accessToken;
         return customResponse()
             ->data([
-                "user" => User::find($user->id)->get(),
+                "user" => User::where("id", $user->id)
+                    ->get()
+                    ->first(),
                 "access_token" => $accessToken,
             ])
             ->message("You have successfully signed up.")
@@ -96,15 +98,37 @@ class AuthenticationController extends Controller
         if (!Auth::attempt($credentials)) {
             return customResponse()
                 ->data([])
-                ->message("Failed to log in.")
+                ->message("Invalid credentials.")
                 ->unathorized()
                 ->generate();
         }
         $accessToken = Auth::user()->createToken("authToken")->accessToken;
+        $user = User::where("id", Auth::id())
+            ->get()
+            ->first();
 
+        if ($user->user_type == "clinic_member") {
+            return customResponse()
+                ->data([
+                    "user" => $user,
+                    "clinic" => $user
+                        ->clinicMember()
+                        ->get()
+                        ->first()
+                        ->clinic()
+                        ->get()
+                        ->first(),
+                    "access_token" => $accessToken,
+                ])
+                ->message("You have successfully logged in.")
+                ->success()
+                ->generate();
+        }
         return customResponse()
             ->data([
-                "user" => User::find(Auth::id())->get(),
+                "user" => User::where("id", Auth::id())
+                    ->get()
+                    ->first(),
                 "access_token" => $accessToken,
             ])
             ->message("You have successfully logged in.")

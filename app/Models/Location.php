@@ -17,6 +17,7 @@ class Location extends Model
         "clinic_id",
     ];
 
+    protected $hidden = ["profile_id", "clinic_id"];
     public function profile()
     {
         return $this->belongsTo(Profile::class);
