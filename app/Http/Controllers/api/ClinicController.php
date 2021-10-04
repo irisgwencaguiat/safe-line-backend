@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clinic\CreateClinic;
 use App\Http\Requests\Clinic\CreateClinicMember;
+use App\Http\Requests\Clinic\CreateClinicService;
 use App\Http\Requests\Clinic\UpdateClinicStatus;
 use App\Http\Requests\Clinic\UploadClinicFiles;
 use App\Models\ClinicFile;
@@ -14,6 +15,7 @@ use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\ClinicService;
 use App\Models\Profile;
+use App\Models\Service;
 use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
@@ -71,7 +73,7 @@ class ClinicController extends Controller
             $clinics = $clinics
                 ->where("slug", "LIKE", $search)
                 ->orWhereHas("location", function ($query) use ($search) {
-                    $query->where("address", "LIKE", $search);
+                    $query->where("address", "LI    KE", $search);
                 })
                 ->orWhereHas("clinicServices", function ($query) use ($search) {
                     $query->whereHas("service", function ($query) use (
@@ -79,7 +81,8 @@ class ClinicController extends Controller
                     ) {
                         $query->where("slug", "LIKE", $search);
                     });
-                });
+                })
+                ->orderBy("created_at", "desc");
         }
 
         $clinics = $clinics->paginate(
@@ -172,6 +175,7 @@ class ClinicController extends Controller
         $clinic = Clinic::where("id", $request->input("clinic_id"))
             ->get()
             ->first();
+
         if ($clinic->status == "pending" || $clinic->status == "rejected") {
             return customResponse()
                 ->data([])
@@ -238,6 +242,60 @@ class ClinicController extends Controller
                     ->first()
             )
             ->message("Clinic member is successfully created.")
+            ->success()
+            ->generate();
+    }
+
+    public function createClinicService(CreateClinicService $request)
+    {
+        $service = Service::create([
+            "name" => $request->input("name"),
+            "slug" => Str::slug($request->input("name"), "_"),
+        ]);
+
+        return customResponse()
+            ->data($service)
+            ->message("Service is successfully created.")
+            ->success()
+            ->generate();
+    }
+
+    public function getClinicService($id)
+    {
+        $service = Service::where("id", (int) $id)
+            ->get()
+            ->first();
+
+        return customResponse()
+            ->data($service)
+            ->message("Getting clinic is successful.")
+            ->success()
+            ->generate();
+    }
+
+    public function getClinicServices(Request $request)
+    {
+        $services = new Service();
+
+        if ($request->has("search")) {
+            $search = "%" . $request->get("search") . "%";
+
+            $services = $services
+                ->where("slug", "LIKE", $search)
+
+                ->orderBy("created_at", "desc");
+        }
+
+        $services = $services->paginate(
+            $request->get("per_page", 10),
+            ["*"],
+            "page",
+            $request->get("page", 1)
+        );
+
+        return customResponse()
+            ->data($services)
+            ->message("Getting services is successful.")
             ->success()
             ->generate();
     }

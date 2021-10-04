@@ -30,7 +30,15 @@ Route::middleware("auth:api")
             ClinicController::class,
             "CreateClinicMember",
         ]);
+        Route::post("/services", [
+            ClinicController::class,
+            "CreateClinicService",
+        ]);
         Route::get("/", [ClinicController::class, "getClinics"]);
+        Route::get("/services/{id}", [
+            ClinicController::class,
+            "getClinicService",
+        ]);
         Route::get("/{id}", [ClinicController::class, "getClinic"]);
         Route::put("/", [ClinicController::class, "updateClinicStatus"]);
     });
