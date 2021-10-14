@@ -44,4 +44,19 @@ class Clinic extends Model
     {
         return $this->hasMany(ClinicFile::class);
     }
+
+    public function roomMembers()
+    {
+        return $this->hasMany(RoomMember::class);
+    }
+
+    public function chats()
+    {
+        return $this->HasMany(Chat::class);
+    }
+
+    public function room()
+    {
+        return $this->HasOne(Room::class);
+    }
 }

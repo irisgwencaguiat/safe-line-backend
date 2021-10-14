@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\api\AppointmentController;
 use App\Http\Controllers\api\AuthenticationController;
+use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\ClinicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +43,18 @@ Route::middleware("auth:api")
         ]);
         Route::get("/{id}", [ClinicController::class, "getClinic"]);
         Route::put("/", [ClinicController::class, "updateClinicStatus"]);
+    });
+Route::middleware("auth:api")
+    ->prefix("appointments")
+    ->group(function () {
+        Route::post("/request", [
+            AppointmentController::class,
+            "requestAppointment",
+        ]);
+    });
+
+Route::middleware("auth:api")
+    ->prefix("chats")
+    ->group(function () {
+        Route::post("/", [ChatController::class, "createChat"]);
     });

@@ -15,6 +15,8 @@ use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\ClinicService;
 use App\Models\Profile;
+use App\Models\Room;
+use App\Models\RoomMember;
 use App\Models\Service;
 use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -73,7 +75,7 @@ class ClinicController extends Controller
             $clinics = $clinics
                 ->where("slug", "LIKE", $search)
                 ->orWhereHas("location", function ($query) use ($search) {
-                    $query->where("address", "LI    KE", $search);
+                    $query->where("address", "LIKE", $search);
                 })
                 ->orWhereHas("clinicServices", function ($query) use ($search) {
                     $query->whereHas("service", function ($query) use (
@@ -81,16 +83,17 @@ class ClinicController extends Controller
                     ) {
                         $query->where("slug", "LIKE", $search);
                     });
-                })
-                ->orderBy("created_at", "desc");
+                });
         }
 
-        $clinics = $clinics->paginate(
-            $request->get("per_page", 10),
-            ["*"],
-            "page",
-            $request->get("page", 1)
-        );
+        $clinics = $clinics
+            ->paginate(
+                $request->get("per_page", 10),
+                ["*"],
+                "page",
+                $request->get("page", 1)
+            )
+            ->sortByDesc("created_at");
 
         return customResponse()
             ->data($clinics)
@@ -114,31 +117,40 @@ class ClinicController extends Controller
 
     public function updateClinicStatus(UpdateClinicStatus $request)
     {
-        $userId = Clinic::where("id", $request->input("clinic_id"))
-            ->pluck("user_id")
-            ->first();
-
-        if ($request->input("status") == "approved") {
-            ClinicMember::create([
-                "member_type" => "admin",
-                "clinic_id" => $request->input("clinic_id"),
-                "user_id" => $userId,
-            ]);
-        }
-
-        User::where("id", $userId)->update([
-            "user_type" => "clinic_member",
-        ]);
-
-        Clinic::where("id", $request->input("clinic_id"))->update([
-            "status" => $request->input("status"),
-        ]);
         $clinic = Clinic::where("id", $request->input("clinic_id"))
             ->get()
             ->first();
+        if ($request->input("status") == "approved") {
+            $clinicMember = ClinicMember::create([
+                "member_type" => "admin",
+                "clinic_id" => $request->input("clinic_id"),
+                "user_id" => $clinic->user_id,
+            ]);
 
+            User::where("id", $clinic->user_id)->update([
+                "user_type" => "clinic_member",
+            ]);
+
+            $room = Room::create([
+                "name" => $clinic->name,
+                "room_type" => "group",
+                "clinic_id" => $clinic->id,
+            ]);
+
+            RoomMember::create([
+                "room_id" => $room->id,
+                "user_id" => $clinicMember->user_id,
+            ]);
+        }
+        Clinic::where("id", $request->input("clinic_id"))->update([
+            "status" => $request->input("status"),
+        ]);
         return customResponse()
-            ->data($clinic)
+            ->data(
+                Clinic::where("id", $request->input("clinic_id"))
+                    ->get()
+                    ->first()
+            )
             ->message("Clinic status has been updated.")
             ->success()
             ->generate();
@@ -235,6 +247,13 @@ class ClinicController extends Controller
             "user_id" => $user->id,
         ]);
 
+        RoomMember::create([
+            "room_id" => $clinic
+                ->room()
+                ->pluck("id")
+                ->first(),
+            "user_id" => $user->id,
+        ]);
         return customResponse()
             ->data(
                 User::where("id", $user->id)

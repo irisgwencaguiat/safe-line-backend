@@ -5,13 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClinicMember extends Model
+class RoomMember extends Model
 {
     use HasFactory;
 
-    public $with = ["user"];
+    protected $fillable = ["room_id", "user_id"];
 
-    protected $fillable = ["member_type", "clinic_id", "user_id"];
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
 
     public function clinic()
     {
@@ -21,10 +24,5 @@ class ClinicMember extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function chats()
-    {
-        return $this->HasMany(Chat::class);
     }
 }

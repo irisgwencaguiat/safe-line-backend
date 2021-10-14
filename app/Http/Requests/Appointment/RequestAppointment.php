@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Clinic;
+namespace App\Http\Requests\Appointment;
 
 use App\Exceptions\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateClinicMember extends FormRequest
+class RequestAppointment extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,25 +26,11 @@ class CreateClinicMember extends FormRequest
     public function rules()
     {
         return [
-            "first_name" => "required|string",
-            "last_name" => "required|string",
-            "email" => "required|unique:users",
-            "password" => "required|string",
-            "gender" => "required|string",
-            "birthday" => "required",
-            "contacts" => "required|string",
-            "address" => "required|string",
-            "latitude" => "required|string",
-            "longitude" => "required|string",
-            "image" => "image|mimes:jpeg,png,jpg,gif,svg",
-            "member_type" => "required|string",
+            "message" => "required|string",
             "clinic_id" => "required",
         ];
     }
 
-    /**
-     * @throws ValidationException
-     */
     protected function failedValidation(Validator $validator)
     {
         throw new ValidationException($validator);

@@ -45,4 +45,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(ClinicMember::class);
     }
+
+    public function roomMembers()
+    {
+        return $this->hasMany(RoomMember::class);
+    }
+
+    public function chatSeens()
+    {
+        return $this->HasMany(ChatSeen::class);
+    }
+
+    public function chats()
+    {
+        return $this->HasMany(Chat::class);
+    }
 }
