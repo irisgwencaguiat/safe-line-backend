@@ -87,13 +87,13 @@ class ClinicController extends Controller
         }
 
         $clinics = $clinics
+            ->orderBy("created_at", "DESC")
             ->paginate(
                 $request->get("per_page", 10),
                 ["*"],
                 "page",
                 $request->get("page", 1)
-            )
-            ->sortByDesc("created_at");
+            );
 
         return customResponse()
             ->data($clinics)

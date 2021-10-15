@@ -39,4 +39,66 @@ class ChatController extends Controller
             ->success()
             ->generate();
     }
+
+    public function fetchDirectRooms(Request $request)
+    {
+        $rooms = Room::whereHas("roomMembers", function ($query) use (
+            $request
+        ) {
+            $query->where("user_id", Auth::id())->where("room_type", "direct");
+        })
+            ->orderBy("updated_at", "DESC")
+            ->paginate(
+                $request->get("per_page", 10),
+                ["*"],
+                "page",
+                $request->get("page", 1)
+            );
+
+        return customResponse()
+            ->data($rooms)
+            ->message("Direct rooms fetched successful.")
+            ->success()
+            ->generate();
+    }
+
+    public function fetchGroupRooms(Request $request)
+    {
+        $rooms = Room::whereHas("roomMembers", function ($query) use (
+            $request
+        ) {
+            $query->where("user_id", Auth::id())->where("room_type", "group");
+        })
+            ->orderBy("updated_at", "DESC")
+            ->paginate(
+                $request->get("per_page", 10),
+                ["*"],
+                "page",
+                $request->get("page", 1)
+            );
+        echo Auth::id();
+        return customResponse()
+            ->data($rooms)
+            ->message("Group rooms fetched successful.")
+            ->success()
+            ->generate();
+    }
+
+    public function fetchChats(Request $request, $id)
+    {
+        $chats = Chat::where("room_id", (int) $id)
+            ->orderBy("created_at", "DESC")
+            ->paginate(
+                $request->get("per_page", 10),
+                ["*"],
+                "page",
+                $request->get("page", 1)
+            );
+
+        return customResponse()
+            ->data($chats)
+            ->message("Chats fetched successful.")
+            ->success()
+            ->generate();
+    }
 }

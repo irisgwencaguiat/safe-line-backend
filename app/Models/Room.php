@@ -19,7 +19,7 @@ class Room extends Model
 
     public function chats()
     {
-        return $this->hasMany(Chat::class);
+        return $this->hasMany(Chat::class)->orderBy("created_at", "DESC");
     }
 
     public function clinic()

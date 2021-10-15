@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\api;
 
 use App\Events\NewRoom;
-use App\Events\RequestAppointment;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Appointment\RequestAppointment;
 use App\Models\Chat;
-use App\Models\ChatRoom;
 use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\Room;
@@ -16,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
-    public function requestAppointment(Request $request)
+    public function requestAppointment(RequestAppointment $request)
     {
         $doesRoomExist = Room::whereHas("roomMembers", function ($query) use (
             $request

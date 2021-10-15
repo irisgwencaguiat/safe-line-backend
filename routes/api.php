@@ -57,4 +57,10 @@ Route::middleware("auth:api")
     ->prefix("chats")
     ->group(function () {
         Route::post("/", [ChatController::class, "createChat"]);
+        Route::get("/rooms/direct", [
+            ChatController::class,
+            "fetchDirectRooms",
+        ]);
+        Route::get("/rooms/group", [ChatController::class, "fetchGroupRooms"]);
+        Route::get("/{id}", [ChatController::class, "fetchChats"]);
     });
