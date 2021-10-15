@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Events\CreateChat;
 use App\Events\NewRoom;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\RequestAppointment;
@@ -34,14 +35,14 @@ class AppointmentController extends Controller
                     "clinic_id" => $request->input("clinic_id"),
                 ]);
 
-        Chat::create([
-            "message" => $request->input("message"),
-            "user_id" => Auth::id(),
-            "room_id" => $room->id,
-            "sender_type" => "patient",
-        ]);
-
         if (count($doesRoomExist) < 1) {
+            Chat::create([
+                "message" => $request->input("message"),
+                "user_id" => Auth::id(),
+                "room_id" => $room->id,
+                "sender_type" => "patient",
+            ]);
+
             RoomMember::create([
                 "room_id" => $room->id,
                 "user_id" => Auth::id(),
@@ -71,6 +72,15 @@ class AppointmentController extends Controller
                         ->first()
                 )
             );
+        } else {
+            $newChat = Chat::create([
+                "message" => $request->input("message"),
+                "user_id" => Auth::id(),
+                "room_id" => $room->id,
+                "sender_type" => "patient",
+            ]);
+
+            event(new CreateChat($room->id, $newChat));
         }
 
         return customResponse()
