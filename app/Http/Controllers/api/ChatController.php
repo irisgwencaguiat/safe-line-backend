@@ -76,7 +76,6 @@ class ChatController extends Controller
                 "page",
                 $request->get("page", 1)
             );
-        echo Auth::id();
         return customResponse()
             ->data($rooms)
             ->message("Group rooms fetched successful.")
