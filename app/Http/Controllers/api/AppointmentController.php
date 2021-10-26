@@ -67,7 +67,8 @@ class AppointmentController extends Controller
             event(
                 new NewRoom(
                     $userIds,
-                    Room::where("id", $room->id)
+                    Room::with(["lastChat"])
+                        ->where("id", $room->id)
                         ->get()
                         ->first()
                 )
@@ -82,13 +83,20 @@ class AppointmentController extends Controller
 
             event(new CreateChat($room->id, $newChat));
         }
-
-        return customResponse()
-            ->data(
-                Room::where("id", $room->id)
+        $newResponse =
+            count($doesRoomExist) < 1
+                ? Room::with(["lastChat"])
+                    ->where("id", $room->id)
                     ->get()
                     ->first()
-            )
+                : Chat::create([
+                    "message" => $request->input("message"),
+                    "user_id" => Auth::id(),
+                    "room_id" => $room->id,
+                    "sender_type" => "patient",
+                ]);
+        return customResponse()
+            ->data($newResponse)
             ->message("Request appointment successful.")
             ->success()
             ->generate();

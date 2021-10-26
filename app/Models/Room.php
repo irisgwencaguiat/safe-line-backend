@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Room extends Model
 {
     use HasFactory;
-    public $with = ["roomMembers", "chats"];
+    public $with = ["roomMembers"];
 
     protected $fillable = ["room_type", "name", "clinic_id"];
 
@@ -20,6 +20,10 @@ class Room extends Model
     public function chats()
     {
         return $this->hasMany(Chat::class)->orderBy("created_at", "DESC");
+    }
+    public function lastChat()
+    {
+        return $this->hasOne(Chat::class)->orderBy("created_at", "DESC");
     }
 
     public function clinic()

@@ -89,10 +89,10 @@ class ClinicController extends Controller
         $clinics = $clinics
             ->orderBy("created_at", "DESC")
             ->paginate(
-                $request->get("per_page", 10),
+                (int) $request->get("per_page", 10),
                 ["*"],
                 "page",
-                $request->get("page", 1)
+                (int) $request->get("page", 1)
             );
 
         return customResponse()
@@ -306,10 +306,10 @@ class ClinicController extends Controller
         }
 
         $services = $services->paginate(
-            $request->get("per_page", 10),
+            (int) $request->get("per_page", 10),
             ["*"],
             "page",
-            $request->get("page", 1)
+            (int) $request->get("page", 1)
         );
 
         return customResponse()
