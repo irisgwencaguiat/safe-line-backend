@@ -9,6 +9,8 @@ class RoomMember extends Model
 {
     use HasFactory;
 
+    public $with = ["user"];
+
     protected $fillable = ["room_id", "user_id"];
 
     public function room()
