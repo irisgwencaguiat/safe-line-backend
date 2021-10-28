@@ -81,7 +81,7 @@ class AppointmentController extends Controller
                 "room_id" => $room->id,
                 "sender_type" => "patient",
             ]);
-            echo Auth::id();
+
             $roomMembers = RoomMember::where("room_id", $room->id)
                 ->whereNotIn("user_id", [Auth::id()])
                 ->get();
