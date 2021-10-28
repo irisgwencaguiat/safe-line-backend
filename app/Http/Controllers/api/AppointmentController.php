@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Events\CreateChat;
+use App\Events\ExistingRoom;
 use App\Events\NewRoom;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\RequestAppointment;
@@ -74,29 +75,39 @@ class AppointmentController extends Controller
                 )
             );
         } else {
-            $newChat = Chat::create([
+            Chat::create([
                 "message" => $request->input("message"),
                 "user_id" => Auth::id(),
                 "room_id" => $room->id,
                 "sender_type" => "patient",
             ]);
-
-            event(new CreateChat($room->id, $newChat));
+            echo Auth::id();
+            $roomMembers = RoomMember::where("room_id", $room->id)
+                ->whereNotIn("user_id", [Auth::id()])
+                ->get();
+            $userIds = [];
+            foreach ($roomMembers as $roomMember) {
+                $userIds[] = "user-{$roomMember->user_id}";
+            }
+            $room->touch();
+            event(
+                new ExistingRoom(
+                    $userIds,
+                    Room::with(["lastChat"])
+                        ->where("id", $room->id)
+                        ->get()
+                        ->first()
+                )
+            );
         }
-        $newResponse =
-            count($doesRoomExist) < 1
-                ? Room::with(["lastChat"])
+
+        return customResponse()
+            ->data(
+                Room::with(["lastChat"])
                     ->where("id", $room->id)
                     ->get()
                     ->first()
-                : Chat::create([
-                    "message" => $request->input("message"),
-                    "user_id" => Auth::id(),
-                    "room_id" => $room->id,
-                    "sender_type" => "patient",
-                ]);
-        return customResponse()
-            ->data($newResponse)
+            )
             ->message("Request appointment successful.")
             ->success()
             ->generate();
