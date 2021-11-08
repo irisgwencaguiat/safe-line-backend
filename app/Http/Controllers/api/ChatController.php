@@ -87,8 +87,9 @@ class ChatController extends Controller
 
     public function fetchChats(Request $request, $id)
     {
-        $chats = Chat::where("room_id", (int) $id)
-            ->orderBy("created_at", "DESC")
+        $chats = Chat::with(["user"])
+            ->where("room_id", (int) $id)
+            ->orderBy("created_at", "ASC")
             ->paginate(
                 (int) $request->get("per_page", 10),
                 ["*"],
