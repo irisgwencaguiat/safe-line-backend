@@ -89,7 +89,7 @@ class ChatController extends Controller
     {
         $chats = Chat::with(["user"])
             ->where("room_id", (int) $id)
-            ->orderBy("created_at", "DESC")
+            ->orderBy("created_at", "ASC")
             ->paginate(
                 (int) $request->get("per_page", 10),
                 ["*"],
