@@ -39,6 +39,6 @@ class CreateChat implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return "create-chat";
+        return "new-chat";
     }
 }
