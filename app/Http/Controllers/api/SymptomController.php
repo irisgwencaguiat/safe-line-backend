@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Symptom\RecommendSpecialist;
 use App\Models\Service;
 use App\Models\Symptom;
 use Illuminate\Http\Request;
@@ -26,12 +27,8 @@ class SymptomController extends Controller
             ->generate();
     }
 
-    public function recommendSpecialist(Request $request)
+    public function recommendSpecialist(RecommendSpecialist $request)
     {
-        //        $request->headers->set("App-Id", env("INFERMEDICA_APP_ID"));
-        //        $request->headers->set("App-Key", env("INFERMEDICA_APP_KEY"));
-        //        $request->headers->set("Content-Type", "application/json");
-
         $symptomIds = explode(",", $request->input("symptoms_id"));
         $evidence = [];
         foreach ($symptomIds as $symptomId) {
