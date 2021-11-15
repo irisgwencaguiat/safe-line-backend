@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Service;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ServiceSeeder extends Seeder
 {
@@ -14,65 +15,45 @@ class ServiceSeeder extends Seeder
      */
     public function run()
     {
-        Service::create([
-            "name" => "Cardiology",
-            "slug" => "cardiology",
+        $services = [];
+        array_push($services, ["name" => "Allergologist", "id" => "sp_23"]);
+        array_push($services, ["name" => "Angiologist", "id" => "sp_21"]);
+        array_push($services, ["name" => "Cardiologist", "id" => "sp_12"]);
+        array_push($services, ["name" => "Dentist", "id" => "sp_18"]);
+        array_push($services, ["name" => "Dermatologist", "id" => "sp_9"]);
+        array_push($services, ["name" => "Diabetologist", "id" => "sp_22"]);
+        array_push($services, ["name" => "Endocrinologist", "id" => "sp_10"]);
+        array_push($services, ["name" => "ENT doctor", "id" => "sp_14"]);
+        array_push($services, ["name" => "Gastroenterologist", "id" => "sp_5"]);
+        array_push($services, [
+            "name" => "General Practitioner",
+            "id" => "sp_1",
         ]);
-        Service::create([
-            "name" => "Dentistry",
-            "slug" => "dentistry",
+        array_push($services, ["name" => "Gynecologist", "id" => "sp_15"]);
+        array_push($services, ["name" => "Hematologist", "id" => "sp_25"]);
+        array_push($services, ["name" => "Infectiologist", "id" => "sp_19"]);
+        array_push($services, [
+            "name" => "Internal Diseases Specialist",
+            "id" => "sp_2",
         ]);
-        Service::create([
-            "name" => "Dermatology",
-            "slug" => "dermatology",
-        ]);
-        Service::create([
-            "name" => "Ear, Nose and Throat",
-            "slug" => "ear_nose_and_throat",
-        ]);
-        Service::create([
-            "name" => "Gastroenterology",
-            "slug" => "gastroenterology",
-        ]);
-        Service::create([
-            "name" => "Gynecology and Obstetrics",
-            "slug" => "gynecology_and_obstetrics",
-        ]);
-        Service::create([
-            "name" => "Neurology",
-            "slug" => "neurology",
-        ]);
-        Service::create([
-            "name" => "Nutrition",
-            "slug" => "nutrition",
-        ]);
-        Service::create([
-            "name" => "Oncology",
-            "slug" => "oncology",
-        ]);
-        Service::create([
-            "name" => "Ophthalmology",
-            "slug" => "ophthalmology",
-        ]);
-        Service::create([
-            "name" => "Orthopedics",
-            "slug" => "orthopedics",
-        ]);
-        Service::create([
-            "name" => "Podiatry",
-            "slug" => "podiatry",
-        ]);
-        Service::create([
-            "name" => "Physical Therapy",
-            "slug" => "physical therapy",
-        ]);
-        Service::create([
-            "name" => "Sports Medicine",
-            "slug" => "sports medicine",
-        ]);
-        Service::create([
-            "name" => "Urology",
-            "slug" => "urology",
-        ]);
+        array_push($services, ["name" => "Nephrologist", "id" => "sp_24"]);
+        array_push($services, ["name" => "Neurologist", "id" => "sp_17"]);
+        array_push($services, ["name" => "Oncologist", "id" => "sp_13"]);
+        array_push($services, ["name" => "Ophthalmologist", "id" => "sp_7"]);
+        array_push($services, ["name" => "Pediatrician", "id" => "sp_3"]);
+        array_push($services, ["name" => "Psychiatrist", "id" => "sp_16"]);
+        array_push($services, ["name" => "Pulmonologist", "id" => "sp_27"]);
+        array_push($services, ["name" => "Rheumatologist", "id" => "sp_20"]);
+        array_push($services, ["name" => "Surgeon", "id" => "sp_4"]);
+        array_push($services, ["name" => "Toxicologist", "id" => "sp_8"]);
+        array_push($services, ["name" => "Urologist", "id" => "sp_11"]);
+
+        foreach ($services as $service) {
+            Service::create([
+                "id" => $service["id"],
+                "name" => $service["name"],
+                "slug" => Str::slug($service["name"]),
+            ]);
+        }
     }
 }

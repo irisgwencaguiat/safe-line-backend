@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateServicesTable extends Migration
+class CreateSymptomsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create("services", function (Blueprint $table) {
+        Schema::create("symptoms", function (Blueprint $table) {
             $table->string("id");
             $table->primary("id");
             $table->timestamps();
-            $table->softDeletes();
+            $table->string("type");
             $table->string("name");
-            $table->string("slug");
+            $table->string("common_name");
         });
     }
 
@@ -30,6 +30,6 @@ class CreateServicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("services");
+        Schema::dropIfExists("symptoms");
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\api\AppointmentController;
 use App\Http\Controllers\api\AuthenticationController;
 use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\ClinicController;
+use App\Http\Controllers\api\SymptomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,4 +64,14 @@ Route::middleware("auth:api")
         ]);
         Route::get("/rooms/group", [ChatController::class, "fetchGroupRooms"]);
         Route::get("/{id}", [ChatController::class, "fetchChats"]);
+    });
+
+Route::middleware("auth:api")
+    ->prefix("symptoms")
+    ->group(function () {
+        Route::get("/", [SymptomController::class, "getSymptoms"]);
+        Route::post("/specialist", [
+            SymptomController::class,
+            "recommendSpecialist",
+        ]);
     });
