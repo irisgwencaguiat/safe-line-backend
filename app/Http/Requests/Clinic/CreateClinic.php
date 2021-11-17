@@ -30,7 +30,7 @@ class CreateClinic extends FormRequest
             "opening_time" => "required",
             "closing_time" => "required",
             "services" => "required|array|min:1",
-            "services.*" => "required|integer",
+            "services.*" => "required|string",
             "address" => "required|string",
             "latitude" => "required|string",
             "longitude" => "required|string",
