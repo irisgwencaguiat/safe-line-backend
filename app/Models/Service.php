@@ -10,6 +10,7 @@ class Service extends Model
     use HasFactory;
 
     public $incrementing = false;
+    public $keyType = "string";
 
     protected $fillable = ["id", "name", "slug"];
 

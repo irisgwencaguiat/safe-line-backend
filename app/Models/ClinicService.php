@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ClinicService extends Model
 {
     use HasFactory;
+    public $incrementing = false;
 
     public $with = ["service"];
 
