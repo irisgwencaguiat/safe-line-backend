@@ -37,7 +37,10 @@ Route::middleware("auth:api")
             ClinicController::class,
             "CreateClinicService",
         ]);
-        Route::post("/find", [ClinicController::class, "findNearestClinic"]);
+        Route::get("/nearest/{serviceId}", [
+            ClinicController::class,
+            "getNearestClinic",
+        ]);
         Route::get("/", [ClinicController::class, "getClinics"]);
         Route::get("/services", [ClinicController::class, "getClinicServices"]);
         Route::get("/services/{id}", [

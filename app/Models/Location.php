@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     use HasFactory;
-
+    protected $casts = [
+        "latitude" => "double",
+        "longitude" => "double",
+    ];
     protected $fillable = [
         "address",
         "latitude",
