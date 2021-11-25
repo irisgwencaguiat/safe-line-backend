@@ -14,8 +14,8 @@ class AddLatitudeAndLongitudeToAddressesTable extends Migration
     public function up()
     {
         Schema::table("addresses", function (Blueprint $table) {
-            $table->string("latitude");
-            $table->string("longitude");
+            $table->double("latitude");
+            $table->double("longitude");
         });
     }
 

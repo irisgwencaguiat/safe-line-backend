@@ -318,4 +318,63 @@ class ClinicController extends Controller
             ->success()
             ->generate();
     }
+
+    //    public function findNearestClinic(Request $request)
+    //    {
+    //        //        $serviceId = $request->input("service_id");
+    //        //
+    //        //        $foundClinics = Clinic::whereHas("clinicServices", function (
+    //        //            $query
+    //        //        ) use ($serviceId) {
+    //        //            $query->where("service_id", $serviceId);
+    //        //        })->get();
+    //
+    //        $clinics = [
+    //            [
+    //                "id" => "lucky chinatown",
+    //                "latitude" => 14.603300932628251,
+    //                "longitude" => 120.9734163429378,
+    //            ],
+    //            [
+    //                "id" => "divisoria binondo mall",
+    //                "latitude" => 14.602889537716475,
+    //                "longitude" => 120.97222066911486,
+    //            ],
+    //            [
+    //                "id" => "divisoria mall",
+    //                "latitude" => 14.603300932628251,
+    //                "longitude" => 120.9706662931451,
+    //            ],
+    //        ];
+    //
+    //        $user = [
+    //            "latitude" => 14.604576171307981,
+    //            "longitude" => 120.97374176746412,
+    //        ];
+    //
+    //        $clinicsDistance = [];
+    //        foreach ($clinics as $clinic) {
+    //            $distance =
+    //                $clinic["latitude"] -
+    //                $user["latitude"] +
+    //                ($clinic["longitude"] - $user["longitude"]);
+    //            array_push($clinicsDistance, [
+    //                "clinic_id" => $clinic["id"],
+    //                "distance" => $distance,
+    //            ]);
+    //        }
+    //
+    //        usort($clinicsDistance, function ($a, $b) {
+    //            if ($a["distance"] == $b["distance"]) {
+    //                return 0;
+    //            }
+    //            return $a["distance"] > $b["distance"] ? -1 : 1;
+    //        });
+    //
+    //        return customResponse()
+    //            ->data($clinicsDistance)
+    //            ->message("Getting the nearest clinic is successful.")
+    //            ->success()
+    //            ->generate();
+    //    }
 }

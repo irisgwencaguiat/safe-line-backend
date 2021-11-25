@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->HasMany(Chat::class);
     }
+
+    public function location()
+    {
+        return $this->hasOne(Location::class);
+    }
 }

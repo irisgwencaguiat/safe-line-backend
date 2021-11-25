@@ -37,7 +37,9 @@ Route::middleware("auth:api")
             ClinicController::class,
             "CreateClinicService",
         ]);
+        Route::post("/find", [ClinicController::class, "findNearestClinic"]);
         Route::get("/", [ClinicController::class, "getClinics"]);
+        Route::get("/services", [ClinicController::class, "getClinicServices"]);
         Route::get("/services/{id}", [
             ClinicController::class,
             "getClinicService",
@@ -45,6 +47,7 @@ Route::middleware("auth:api")
         Route::get("/{id}", [ClinicController::class, "getClinic"]);
         Route::put("/", [ClinicController::class, "updateClinicStatus"]);
     });
+
 Route::middleware("auth:api")
     ->prefix("appointments")
     ->group(function () {

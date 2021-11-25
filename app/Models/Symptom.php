@@ -11,5 +11,7 @@ class Symptom extends Model
 
     public $incrementing = false;
 
+    public $keyType = "string";
+
     protected $fillable = ["id", "name", "type", "common_name"];
 }
