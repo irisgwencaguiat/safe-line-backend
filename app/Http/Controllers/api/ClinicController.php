@@ -281,7 +281,7 @@ class ClinicController extends Controller
 
     public function getClinicService($id)
     {
-        $service = Service::where("id", (int) $id)
+        $service = Service::where("id", $id)
             ->get()
             ->first();
 
