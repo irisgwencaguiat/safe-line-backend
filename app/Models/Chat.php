@@ -11,6 +11,7 @@ class Chat extends Model
 
     protected $touches = ["room"];
 
+    protected $with = ["user"];
     protected $fillable = ["message", "user_id", "room_id", "sender_type"];
 
     public function user()

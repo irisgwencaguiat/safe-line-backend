@@ -28,14 +28,14 @@ class ChatController extends Controller
                     "message" => $request->input("message"),
                     "room_id" => $request->input("room_id"),
                 ]);
-        $newChat = Chat::with(["room", "user"])
-            ->where("id", $chat->id)
+        $newChat = Room::with(["lastChat"])
+            ->where("id", $request->input("room_id"))
             ->get()
             ->first();
         event(new \App\Events\CreateChat($request->input("room_id"), $newChat));
         return customResponse()
-            ->data($newChat)
-            ->message("Request appointment successful.")
+            ->data(true)
+            ->message("Chat sent successfully.")
             ->success()
             ->generate();
     }
