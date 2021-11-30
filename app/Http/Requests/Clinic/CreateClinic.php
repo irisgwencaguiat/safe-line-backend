@@ -32,8 +32,8 @@ class CreateClinic extends FormRequest
             "services" => "required|array|min:1",
             "services.*" => "required|string",
             "address" => "required|string",
-            "latitude" => "required|string",
-            "longitude" => "required|string",
+            "latitude" => "required|numeric",
+            "longitude" => "required|numeric",
         ];
     }
     /**
