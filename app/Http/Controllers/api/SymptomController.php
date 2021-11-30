@@ -46,7 +46,7 @@ class SymptomController extends Controller
             "evidence" => $evidence,
         ];
 
-        $testExample = Http::withHeaders([
+        $recommendation = Http::withHeaders([
             "App-Id" => env("INFERMEDICA_APP_ID"),
             "App-Key" => env("INFERMEDICA_APP_KEY"),
             "Content-Type" => "application/json",
@@ -56,8 +56,12 @@ class SymptomController extends Controller
                 $requestBody
             )
             ->json();
+
+        if ($recommendation["recommended_channel"] !== "personal_visit") {
+            $recommendation["recommended_channel"] = "video_teleconsultation";
+        }
         return customResponse()
-            ->data($testExample)
+            ->data($recommendation)
             ->message("Getting Specialist Recommendation successful.")
             ->success()
             ->generate();
