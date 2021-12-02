@@ -9,7 +9,7 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    public $with = ["appointmentMembers"];
+    public $with = ["appointmentMembers", "clinic"];
 
     public $fillable = [
         "type",

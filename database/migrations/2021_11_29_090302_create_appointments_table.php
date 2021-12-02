@@ -18,7 +18,7 @@ class CreateAppointmentsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->string("type");
-            $table->string("zoom_link")->nullable();
+            $table->text("zoom_link")->nullable();
             $table->time("appointment_time");
             $table->timestamp("appointment_date");
             $table->integer("clinic_id")->unsigned();

@@ -124,8 +124,9 @@ class AppointmentController extends Controller
         if ($request->input("appointment_type") === "personal_visit") {
             $appointment = Appointment::create([
                 "type" => "personal_visit",
-                "appointment_time" => rtrim($appointmentTime, "Z"),
+                "appointment_time" => rtrim($appointmentTime[1], "Z"),
                 "appointment_date" => $request->input("start_time"),
+                "clinic_id" => $request->input("clinic_id"),
             ]);
 
             AppointmentMember::create([
@@ -138,6 +139,16 @@ class AppointmentController extends Controller
                 "appointment_id" => $appointment->id,
                 "user_id" => $request->input("patient_id"),
             ]);
+
+            return customResponse()
+                ->data(
+                    Appointment::where("id", $appointment->id)
+                        ->get()
+                        ->first()
+                )
+                ->message("Request appointment successful.")
+                ->success()
+                ->generate();
         } else {
             $requestBody = [
                 "type" => 2,
@@ -150,8 +161,10 @@ class AppointmentController extends Controller
             ];
 
             $responseData = Http::withHeaders([
-                "Authorization" => "Bearer " + env("ZOOM_APP_TOKEN"),
+                "Authorization" => "Bearer " . env("ZOOM_APP_TOKEN"),
                 "Content-Type" => "application/json",
+                "alg" => "HS256",
+                "typ" => "JWT",
             ])
                 ->post(
                     "https://api.zoom.us/v2/users/BsVmKFNrQ8KqxNftn5K0dA/meetings",
@@ -161,9 +174,10 @@ class AppointmentController extends Controller
 
             $appointment = Appointment::create([
                 "type" => "video_teleconsultation",
-                "zoom_link" => $responseData->start_url,
-                "appointment_time" => rtrim($appointmentTime, "Z"),
+                "zoom_link" => $responseData["start_url"],
+                "appointment_time" => rtrim($appointmentTime[1], "Z"),
                 "appointment_date" => $request->input("start_time"),
+                "clinic_id" => $request->input("clinic_id"),
             ]);
 
             AppointmentMember::create([
@@ -176,16 +190,16 @@ class AppointmentController extends Controller
                 "appointment_id" => $appointment->id,
                 "user_id" => $request->input("patient_id"),
             ]);
-        }
 
-        return customResponse()
-            ->data(
-                Appointment::where("id", $appointment->id)
-                    ->get()
-                    ->first()
-            )
-            ->message("Request appointment successful.")
-            ->success()
-            ->generate();
+            return customResponse()
+                ->data(
+                    Appointment::where("id", $appointment->id)
+                        ->get()
+                        ->first()
+                )
+                ->message("Request appointment successful.")
+                ->success()
+                ->generate();
+        }
     }
 }
