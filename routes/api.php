@@ -54,6 +54,7 @@ Route::middleware("auth:api")
 Route::middleware("auth:api")
     ->prefix("appointments")
     ->group(function () {
+        Route::post("/", [AppointmentController::class, "createAppointment"]);
         Route::post("/request", [
             AppointmentController::class,
             "requestAppointment",

@@ -346,9 +346,14 @@ class ClinicController extends Controller
             }
             return $a["distance"] > $b["distance"] ? -1 : 1;
         });
-        unset($clinicsDistance[0]["distance"]);
+        unset($clinicsDistance["distance"]);
+
+        foreach ($clinicsDistance as $key => $value) {
+            unset($clinicsDistance[$key]["distance"]);
+            $clinicsDistance[$key] = $value["clinic"];
+        }
         return customResponse()
-            ->data($clinicsDistance[0]["clinic"])
+            ->data($clinicsDistance)
             ->message("Getting the nearest clinic is successful.")
             ->success()
             ->generate();

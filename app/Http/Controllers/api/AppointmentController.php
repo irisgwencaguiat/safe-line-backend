@@ -7,6 +7,8 @@ use App\Events\ExistingRoom;
 use App\Events\NewRoom;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\RequestAppointment;
+use App\Models\Appointment;
+use App\Models\AppointmentMember;
 use App\Models\Chat;
 use App\Models\Clinic;
 use App\Models\ClinicMember;
@@ -14,6 +16,7 @@ use App\Models\Room;
 use App\Models\RoomMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class AppointmentController extends Controller
 {
@@ -105,6 +108,79 @@ class AppointmentController extends Controller
             ->data(
                 Room::with(["lastChat"])
                     ->where("id", $room->id)
+                    ->get()
+                    ->first()
+            )
+            ->message("Request appointment successful.")
+            ->success()
+            ->generate();
+    }
+
+    public function createAppointment(Request $request)
+    {
+        // "2021-12-02T11:51:00Z"
+        $appointmentTime = explode("T", $request->input("start_time"));
+
+        if ($request->input("appointment_type") === "personal_visit") {
+            $appointment = Appointment::create([
+                "type" => "personal_visit",
+                "appointment_time" => rtrim($appointmentTime, "Z"),
+                "appointment_date" => $request->input("start_time"),
+            ]);
+
+            AppointmentMember::create([
+                "type" => "doctor",
+                "appointment_id" => $appointment->id,
+                "user_id" => $request->input("doctor_id"),
+            ]);
+            AppointmentMember::create([
+                "type" => "patient",
+                "appointment_id" => $appointment->id,
+                "user_id" => $request->input("patient_id"),
+            ]);
+        } else {
+            $requestBody = [
+                "type" => 2,
+                "start_time" => $request->input("start_time"),
+                "settings" => [
+                    "join_before_host" => true,
+                    "approval_type" => 0,
+                    "jbh_time" => 0,
+                ],
+            ];
+
+            $responseData = Http::withHeaders([
+                "Authorization" => "Bearer " + env("ZOOM_APP_TOKEN"),
+                "Content-Type" => "application/json",
+            ])
+                ->post(
+                    "https://api.zoom.us/v2/users/BsVmKFNrQ8KqxNftn5K0dA/meetings",
+                    $requestBody
+                )
+                ->json();
+
+            $appointment = Appointment::create([
+                "type" => "video_teleconsultation",
+                "zoom_link" => $responseData->start_url,
+                "appointment_time" => rtrim($appointmentTime, "Z"),
+                "appointment_date" => $request->input("start_time"),
+            ]);
+
+            AppointmentMember::create([
+                "type" => "doctor",
+                "appointment_id" => $appointment->id,
+                "user_id" => $request->input("doctor_id"),
+            ]);
+            AppointmentMember::create([
+                "type" => "patient",
+                "appointment_id" => $appointment->id,
+                "user_id" => $request->input("patient_id"),
+            ]);
+        }
+
+        return customResponse()
+            ->data(
+                Appointment::where("id", $appointment->id)
                     ->get()
                     ->first()
             )
