@@ -219,7 +219,8 @@ class AppointmentController extends Controller
 
             return customResponse()
                 ->data(
-                    Appointment::where("id", $appointment->id)
+                    Appointment::with(["appointmentMembers"])
+                        ->where("id", $appointment->id)
                         ->get()
                         ->first()
                 )
@@ -244,5 +245,19 @@ class AppointmentController extends Controller
         );
 
         echo $when;
+    }
+
+    public function getDoctorAppointmentSchedule($id)
+    {
+        $doctorAppointments = AppointmentMember::with(["appointment"])
+            ->where("user_id", $id)
+            ->where("type", "doctor")
+            ->get();
+
+        return customResponse()
+            ->data($doctorAppointments)
+            ->message("Request appointment successful.")
+            ->success()
+            ->generate();
     }
 }

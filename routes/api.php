@@ -67,6 +67,10 @@ Route::middleware("auth:api")
             AppointmentController::class,
             "requestAppointment",
         ]);
+        Route::get("/schedule/doctor/{id}", [
+            AppointmentController::class,
+            "getDoctorAppointmentSchedule",
+        ]);
         Route::post("/sms", [AppointmentController::class, "testSms"]);
     });
 
