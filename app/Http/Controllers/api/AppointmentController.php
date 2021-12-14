@@ -41,6 +41,12 @@ class AppointmentController extends Controller
                     "room_type" => "direct",
                     "user_id" => Auth::id(),
                     "clinic_id" => $request->input("clinic_id"),
+                    "recommended_specialist" => $request->input(
+                        "recommended_specialist"
+                    ),
+                    "recommended_channel" => $request->input(
+                        "recommended_channel"
+                    ),
                 ]);
 
         if (count($doesRoomExist) < 1) {

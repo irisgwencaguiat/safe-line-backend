@@ -28,7 +28,7 @@ class ChatController extends Controller
                     "message" => $request->input("message"),
                     "room_id" => $request->input("room_id"),
                 ]);
-        $newChat = Room::with(["lastChat"])
+        $newChat = Room::with(["lastChat", "clinic"])
             ->where("id", $request->input("room_id"))
             ->get()
             ->first();
