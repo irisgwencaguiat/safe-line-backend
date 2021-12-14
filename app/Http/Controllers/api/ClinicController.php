@@ -393,4 +393,17 @@ class ClinicController extends Controller
             ->success()
             ->generate();
     }
+
+    public function getClinicDoctors($id)
+    {
+        $clinicDoctors = ClinicMember::where("clinic_id", $id)
+            ->where("member_type", "doctor")
+            ->get();
+
+        return customResponse()
+            ->data($clinicDoctors)
+            ->message("Getting Clinic Doctors is successful.")
+            ->success()
+            ->generate();
+    }
 }

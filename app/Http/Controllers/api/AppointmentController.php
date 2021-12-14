@@ -257,7 +257,34 @@ class AppointmentController extends Controller
 
         return customResponse()
             ->data($doctorAppointments)
-            ->message("Request appointment successful.")
+            ->message("Get Doctor Appointment Schedule Successful.")
+            ->success()
+            ->generate();
+    }
+
+    public function getPatientAppointments($id)
+    {
+        $patientAppointments = AppointmentMember::with(["appointment"])
+            ->where("user_id", $id)
+            ->where("type", "patient")
+            ->get();
+
+        return customResponse()
+            ->data($patientAppointments)
+            ->message("Get Patient Appointment is Successful.")
+            ->success()
+            ->generate();
+    }
+    public function getDoctorAppointments($id)
+    {
+        $doctorAppointments = AppointmentMember::with(["appointment"])
+            ->where("user_id", $id)
+            ->where("type", "doctor")
+            ->get();
+
+        return customResponse()
+            ->data($doctorAppointments)
+            ->message("Get Doctor Appointment is Successful.")
             ->success()
             ->generate();
     }

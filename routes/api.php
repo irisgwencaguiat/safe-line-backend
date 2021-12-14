@@ -47,6 +47,10 @@ Route::middleware("auth:api")
             ClinicController::class,
             "getClinicService",
         ]);
+        Route::get("/doctors/{id}", [
+            ClinicController::class,
+            "getClinicDoctors",
+        ]);
         Route::get("/{id}", [ClinicController::class, "getClinic"]);
         Route::put("/", [ClinicController::class, "updateClinicStatus"]);
         Route::put("/walk-in", [
@@ -70,6 +74,14 @@ Route::middleware("auth:api")
         Route::get("/schedule/doctor/{id}", [
             AppointmentController::class,
             "getDoctorAppointmentSchedule",
+        ]);
+        Route::get("/patient/{id}", [
+            AppointmentController::class,
+            "getPatientAppointments",
+        ]);
+        Route::get("/doctor/{id}", [
+            AppointmentController::class,
+            "getDoctorAppointments",
         ]);
         Route::post("/sms", [AppointmentController::class, "testSms"]);
     });
