@@ -42,7 +42,7 @@ class ChatController extends Controller
 
     public function fetchDirectRooms(Request $request)
     {
-        $rooms = Room::with(["lastChat"])
+        $rooms = Room::with(["lastChat", "clinic"])
             ->whereHas("roomMembers", function ($query) use ($request) {
                 $query
                     ->where("user_id", Auth::id())

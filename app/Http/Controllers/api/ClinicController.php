@@ -324,7 +324,10 @@ class ClinicController extends Controller
         $foundClinics = Clinic::whereHas("clinicServices", function (
             $query
         ) use ($serviceId) {
-            $query->where("service_id", $serviceId);
+            $query
+                ->where("service_id", $serviceId)
+                ->where("status", "approved")
+                ->where("accept_walk_in", true);
         })->get();
 
         $clinicsDistance = [];

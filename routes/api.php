@@ -59,6 +59,7 @@ Route::middleware("auth:api")
             AppointmentController::class,
             "requestAppointment",
         ]);
+        Route::post("/sms", [AppointmentController::class, "testSms"]);
     });
 
 Route::middleware("auth:api")

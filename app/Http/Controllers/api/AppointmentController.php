@@ -7,6 +7,7 @@ use App\Events\ExistingRoom;
 use App\Events\NewRoom;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\RequestAppointment;
+use App\Mail\AppointmentReminderMail;
 use App\Models\Appointment;
 use App\Models\AppointmentMember;
 use App\Models\Chat;
@@ -14,9 +15,12 @@ use App\Models\Clinic;
 use App\Models\ClinicMember;
 use App\Models\Room;
 use App\Models\RoomMember;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -153,6 +157,7 @@ class AppointmentController extends Controller
             $requestBody = [
                 "type" => 2,
                 "start_time" => $request->input("start_time"),
+                "timezone" => "Asia/Singapore",
                 "settings" => [
                     "join_before_host" => true,
                     "approval_type" => 0,
@@ -180,6 +185,8 @@ class AppointmentController extends Controller
                 "clinic_id" => $request->input("clinic_id"),
             ]);
 
+            $patient = User::find($request->input("patient_id"));
+
             AppointmentMember::create([
                 "type" => "doctor",
                 "appointment_id" => $appointment->id,
@@ -190,6 +197,19 @@ class AppointmentController extends Controller
                 "appointment_id" => $appointment->id,
                 "user_id" => $request->input("patient_id"),
             ]);
+            //
+            //            $when = Carbon::create($request->input("start_time"))
+            //                ->subHours(8)
+            //                //                ->subMinutes(10)
+            //                ->setTimezone("UTC");
+            //
+            //            Mail::to("gwencaguiat@gmail.com")->later(
+            //                $when,
+            //                new AppointmentReminderMail([
+            //                    "time" => rtrim($appointmentTime[1]),
+            //                    "link" => $responseData["start_url"],
+            //                ])
+            //            );
 
             return customResponse()
                 ->data(
@@ -201,5 +221,22 @@ class AppointmentController extends Controller
                 ->success()
                 ->generate();
         }
+    }
+
+    public function testSms()
+    {
+        $when = Carbon::create("2021-12-14T16:35:00Z")
+            ->subHours(8)
+            //            ->subMinutes(10)
+            ->setTimezone("UTC");
+
+        Mail::to("gwencaguiat@gmail.com")->send(
+            new AppointmentReminderMail([
+                "time" => "2:22pm",
+                "link" => $when,
+            ])
+        );
+
+        echo $when;
     }
 }
