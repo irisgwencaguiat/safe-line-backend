@@ -156,6 +156,39 @@ class ClinicController extends Controller
             ->generate();
     }
 
+    public function updatePatientWalkIn(Request $request)
+    {
+        Clinic::where("id", $request->input("clinic_id"))->update([
+            "accept_walk_in" => $request->input("accept_walk_in"),
+        ]);
+
+        return customResponse()
+            ->data(
+                Clinic::where("id", $request->input("clinic_id"))
+                    ->get()
+                    ->first()
+            )
+            ->message("Clinic Patient Walk In Status has been updated.")
+            ->success()
+            ->generate();
+    }
+    public function updateCovidPatient(Request $request)
+    {
+        Clinic::where("id", $request->input("clinic_id"))->update([
+            "accept_covid_patient" => $request->input("accept_covid_patient"),
+        ]);
+
+        return customResponse()
+            ->data(
+                Clinic::where("id", $request->input("clinic_id"))
+                    ->get()
+                    ->first()
+            )
+            ->message("Clinic Accept Covid Patient Status has been updated.")
+            ->success()
+            ->generate();
+    }
+
     public function uploadClinicFiles(UploadClinicFiles $request)
     {
         $clinicId = $request->input("clinic_id");
@@ -326,8 +359,7 @@ class ClinicController extends Controller
         ) use ($serviceId) {
             $query
                 ->where("service_id", $serviceId)
-                ->where("status", "approved")
-                ->where("accept_walk_in", true);
+                ->where("status", "approved");
         })->get();
 
         $clinicsDistance = [];

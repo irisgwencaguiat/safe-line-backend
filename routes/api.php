@@ -49,6 +49,14 @@ Route::middleware("auth:api")
         ]);
         Route::get("/{id}", [ClinicController::class, "getClinic"]);
         Route::put("/", [ClinicController::class, "updateClinicStatus"]);
+        Route::put("/walk-in", [
+            ClinicController::class,
+            "updatePatientWalkIn",
+        ]);
+        Route::put("/covid-patient", [
+            ClinicController::class,
+            "updateCovidPatient",
+        ]);
     });
 
 Route::middleware("auth:api")
