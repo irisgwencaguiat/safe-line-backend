@@ -252,7 +252,8 @@ class AppointmentController extends Controller
         $doctorAppointments = AppointmentMember::with(["appointment"])
             ->where("user_id", $id)
             ->where("type", "doctor")
-            ->get();
+            ->get()
+            ->pluck("appointment.appointment_date");
 
         return customResponse()
             ->data($doctorAppointments)
