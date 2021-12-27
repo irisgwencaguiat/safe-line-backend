@@ -267,6 +267,7 @@ class AppointmentController extends Controller
         $patientAppointments = AppointmentMember::with(["appointment"])
             ->where("user_id", $id)
             ->where("type", "patient")
+            ->orderBy("id", "DESC")
             ->get();
 
         return customResponse()
@@ -280,6 +281,7 @@ class AppointmentController extends Controller
         $doctorAppointments = AppointmentMember::with(["appointment"])
             ->where("user_id", $id)
             ->where("type", "doctor")
+            ->orderBy("id", "DESC")
             ->get();
 
         return customResponse()
