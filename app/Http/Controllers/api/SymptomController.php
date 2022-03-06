@@ -46,6 +46,8 @@ class SymptomController extends Controller
             "evidence" => $evidence,
         ];
 
+        info(env("INFERMEDICA_APP_ID"));
+
         $recommendation = Http::withHeaders([
             "App-Id" => env("INFERMEDICA_APP_ID"),
             "App-Key" => env("INFERMEDICA_APP_KEY"),
@@ -56,6 +58,7 @@ class SymptomController extends Controller
                 $requestBody
             )
             ->json();
+
 
         if ($recommendation["recommended_channel"] !== "personal_visit") {
             $recommendation["recommended_channel"] = "video_teleconsultation";

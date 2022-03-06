@@ -134,8 +134,8 @@ class AppointmentController extends Controller
         if ($request->input("appointment_type") === "personal_visit") {
             $appointment = Appointment::create([
                 "type" => "personal_visit",
-                "appointment_time" => rtrim($appointmentTime[1], "Z"),
-                "appointment_date" => $request->input("start_time"),
+                "appointment_time" => $request->input("time"),
+                "appointment_date" => $request->input("date"),
                 "clinic_id" => $request->input("clinic_id"),
             ]);
 
@@ -162,7 +162,7 @@ class AppointmentController extends Controller
         } else {
             $requestBody = [
                 "type" => 2,
-                "start_time" => $request->input("start_time"),
+                "start_time" => "". $request->input("date") ."T" . $request->input("time") . "" . "Z",
                 "timezone" => "Asia/Singapore",
                 "settings" => [
                     "join_before_host" => true,
@@ -172,7 +172,7 @@ class AppointmentController extends Controller
             ];
 
             $responseData = Http::withHeaders([
-                "Authorization" => "Bearer " . env("ZOOM_APP_TOKEN"),
+                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDY1Nzk0MTUsImlhdCI6MTY0NjU3NDAxNn0.U7bJIpAIfJP_0bShsZtpWStqyOttwJcQkMpHs2cNozI",
                 "Content-Type" => "application/json",
                 "alg" => "HS256",
                 "typ" => "JWT",
@@ -183,11 +183,13 @@ class AppointmentController extends Controller
                 )
                 ->json();
 
+            info($responseData);
+
             $appointment = Appointment::create([
                 "type" => "video_teleconsultation",
                 "zoom_link" => $responseData["start_url"],
-                "appointment_time" => rtrim($appointmentTime[1], "Z"),
-                "appointment_date" => $request->input("start_time"),
+                "appointment_time" => $request->input("time"),
+                "appointment_date" => $request->input("date"),
                 "clinic_id" => $request->input("clinic_id"),
             ]);
 
@@ -252,8 +254,7 @@ class AppointmentController extends Controller
         $doctorAppointments = AppointmentMember::with(["appointment"])
             ->where("user_id", $id)
             ->where("type", "doctor")
-            ->get()
-            ->pluck("appointment.appointment_date");
+            ->get();
 
         return customResponse()
             ->data($doctorAppointments)
@@ -276,6 +277,7 @@ class AppointmentController extends Controller
             ->success()
             ->generate();
     }
+
     public function getDoctorAppointments($id)
     {
         $doctorAppointments = AppointmentMember::with(["appointment"])
