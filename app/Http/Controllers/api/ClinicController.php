@@ -26,6 +26,124 @@ use Illuminate\Support\Str;
 
 class ClinicController extends Controller
 {
+
+    public function developerCreateClinic(CreateClinic $request)
+    {
+        $authID = 1;
+        $clinic = Clinic::create([
+            "name" => $request->input("name"),
+            "slug" => Str::slug($request->input("name"), "_"),
+            "opening_time" => $request->input("opening_time"),
+            "closing_time" => $request->input("closing_time"),
+            "user_id" => $authID,
+            "status" => "approved"
+        ]);
+
+        Location::create([
+            "address" => $request->input("address"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+            "clinic_id" => $clinic->id,
+        ]);
+
+
+        foreach ($request->input("services") as $service) {
+            ClinicService::create([
+                "clinic_id" => $clinic->id,
+                "service_id" => $service,
+            ]);
+        }
+
+        $room = Room::create([
+            "name" => $clinic->name,
+            "room_type" => "group",
+            "clinic_id" => $clinic->id,
+        ]);
+
+        $doctorEmail = "doctor_" . Str::slug($request->input("name"), "_") . "@gmail.com";
+        $userDoctor = User::create([
+            "email" => $doctorEmail,
+            "password" => bcrypt($request->input("password")),
+            "user_type" => "clinic_member",
+        ]);
+
+        $doctorProfile = [
+            "first_name" => "Main",
+            "last_name" => "Doctor",
+            "gender" => "Male",
+            "birthday" => "2000-05-21",
+            "image_url" => null,
+            "user_id" => $userDoctor->id,
+        ];
+        $createdDoctorProfile = Profile::create($doctorProfile);
+        Location::create([
+            "address" => $request->input("address"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+            "profile_id" => $createdDoctorProfile->id,
+        ]);
+        Contact::create([
+            "name" => "Number",
+            "contact" => "09212709683",
+            "profile_id" => $createdDoctorProfile->id,
+        ]);
+        ClinicMember::create([
+            "member_type" => "doctor",
+            "clinic_id" => $clinic->id,
+            "user_id" => $userDoctor->id,
+        ]);
+        RoomMember::create([
+            "room_id" => $room->id,
+            "user_id" => $userDoctor->id,
+        ]);
+
+        $csrEmail = "csr_" . Str::slug($request->input("name"), "_") . "@gmail.com";
+        $userCsr = User::create([
+            "email" => $csrEmail,
+            "password" => bcrypt($request->input("password")),
+            "user_type" => "clinic_member",
+        ]);
+        $csrProfile = [
+            "first_name" => "Main",
+            "last_name" => "CSR",
+            "gender" => "Female",
+            "birthday" => "2000-05-21",
+            "image_url" => null,
+            "user_id" => $userCsr->id,
+        ];
+        $createdCsrProfile = Profile::create($csrProfile);
+        Location::create([
+            "address" => $request->input("address"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+            "profile_id" => $createdCsrProfile->id,
+        ]);
+        Contact::create([
+            "name" => "Number",
+            "contact" => "09212709683",
+            "profile_id" => $createdDoctorProfile->id,
+        ]);
+        ClinicMember::create([
+            "member_type" => "csr",
+            "clinic_id" => $clinic->id,
+            "user_id" => $userCsr->id,
+        ]);
+        RoomMember::create([
+            "room_id" => $room->id,
+            "user_id" => $userCsr->id,
+        ]);
+
+        return customResponse()
+            ->data(
+                Clinic::where("id", $clinic->id)
+                    ->get()
+                    ->first()
+            )
+            ->message("Clinic has been successfully created.")
+            ->success()
+            ->generate();
+    }
+
     public function signup(CreateClinic $request)
     {
         $clinic = Clinic::create([

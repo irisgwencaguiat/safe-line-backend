@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get("/developer/clinics", [ClinicController::class, "getClinics"]);
+Route::get("/developer/clinic/services", [ClinicController::class, "getClinicServices"]);
+Route::post("/developer/clinics", [ClinicController::class, "developerCreateClinic"]);
+
 Route::prefix("auth")->group(function () {
     Route::post("/signup", [AuthenticationController::class, "signup"]);
     Route::post("/login", [AuthenticationController::class, "login"]);
