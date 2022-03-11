@@ -416,6 +416,18 @@ class ClinicController extends Controller
             ->generate();
     }
 
+    public function getClinicMembers($id)
+    {
+        return customResponse()
+            ->data(
+                ClinicMember::where("clinic_id", $id)->get()
+            )
+            ->message("Clinic members is successfully fetched.")
+            ->success()
+            ->generate();
+    }
+
+
     public function createClinicService(CreateClinicService $request)
     {
         $service = Service::create([

@@ -33,9 +33,13 @@ Route::middleware("auth:api")
     ->group(function () {
         Route::post("/", [ClinicController::class, "signup"]);
         Route::post("/files", [ClinicController::class, "uploadClinicFiles"]);
+        Route::get("/members/{id}", [
+            ClinicController::class,
+            "getClinicMembers",
+        ]);
         Route::post("/members", [
             ClinicController::class,
-            "CreateClinicMember",
+            "createClinicMember",
         ]);
         Route::post("/services", [
             ClinicController::class,
