@@ -172,7 +172,7 @@ class AppointmentController extends Controller
             ];
 
             $responseData = Http::withHeaders([
-                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDY1Nzk0MTUsImlhdCI6MTY0NjU3NDAxNn0.U7bJIpAIfJP_0bShsZtpWStqyOttwJcQkMpHs2cNozI",
+                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDc2MTIxMDcsImlhdCI6MTY0NzAwNzMwOX0.PFTPn7H2njHp0y_z89i7JzAUYyIovyrqJjSixVCJjnM",
                 "Content-Type" => "application/json",
                 "alg" => "HS256",
                 "typ" => "JWT",
@@ -227,6 +227,69 @@ class AppointmentController extends Controller
                         ->first()
                 )
                 ->message("Request appointment successful.")
+                ->success()
+                ->generate();
+        }
+    }
+
+    public function updateAppointment(Request $request)
+    {
+        $appointmentID = $request->input("appointment_id");
+        if ($request->input("appointment_type") === "personal_visit") {
+            Appointment::where("id", $appointmentID)->update([
+                "appointment_time" => $request->input("time"),
+                "appointment_date" => $request->input("date"),
+            ]);
+
+            return customResponse()
+                ->data(
+                    Appointment::where("id", $appointmentID)
+                        ->get()
+                        ->first()
+                )
+                ->message("Request appointment updated.")
+                ->success()
+                ->generate();
+        } else {
+            $requestBody = [
+                "type" => 2,
+                "start_time" => "". $request->input("date") ."T" . $request->input("time") . "" . "Z",
+                "timezone" => "Asia/Singapore",
+                "settings" => [
+                    "join_before_host" => true,
+                    "approval_type" => 0,
+                    "jbh_time" => 0,
+                ],
+            ];
+
+            $responseData = Http::withHeaders([
+                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDc2MTIxMDcsImlhdCI6MTY0NzAwNzMwOX0.PFTPn7H2njHp0y_z89i7JzAUYyIovyrqJjSixVCJjnM",
+                "Content-Type" => "application/json",
+                "alg" => "HS256",
+                "typ" => "JWT",
+            ])
+                ->post(
+                    "https://api.zoom.us/v2/users/BsVmKFNrQ8KqxNftn5K0dA/meetings",
+                    $requestBody
+                )
+                ->json();
+
+            info($responseData);
+
+            $appointment = Appointment::where("id", $appointmentID)->update([
+                "zoom_link" => $responseData["start_url"],
+                "appointment_time" => $request->input("time"),
+                "appointment_date" => $request->input("date"),
+            ]);
+
+            return customResponse()
+                ->data(
+                    Appointment::with(["appointmentMembers"])
+                        ->where("id", $appointmentID)
+                        ->get()
+                        ->first()
+                )
+                ->message("Request appointment updated.")
                 ->success()
                 ->generate();
         }

@@ -60,6 +60,44 @@ class ClinicController extends Controller
             "clinic_id" => $clinic->id,
         ]);
 
+
+        $adminEmail = "admin_" . Str::slug($request->input("name"), "_") . "@gmail.com";
+        $userAdmin = User::create([
+            "email" => $adminEmail,
+            "password" => bcrypt($request->input("password")),
+            "user_type" => "clinic_member",
+        ]);
+
+        $adminProfile = [
+            "first_name" => "Main",
+            "last_name" => "Admin",
+            "gender" => "Male",
+            "birthday" => "2000-05-21",
+            "image_url" => null,
+            "user_id" => $userAdmin->id,
+        ];
+        $createdAdminProfile = Profile::create($adminProfile);
+        Location::create([
+            "address" => $request->input("address"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+            "profile_id" => $createdAdminProfile->id,
+        ]);
+        Contact::create([
+            "name" => "Number",
+            "contact" => "09212709683",
+            "profile_id" => $createdAdminProfile->id,
+        ]);
+        ClinicMember::create([
+            "member_type" => "admin",
+            "clinic_id" => $clinic->id,
+            "user_id" => $userAdmin->id,
+        ]);
+        RoomMember::create([
+            "room_id" => $room->id,
+            "user_id" => $userAdmin->id,
+        ]);
+
         $doctorEmail = "doctor_" . Str::slug($request->input("name"), "_") . "@gmail.com";
         $userDoctor = User::create([
             "email" => $doctorEmail,
