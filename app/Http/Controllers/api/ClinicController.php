@@ -64,7 +64,7 @@ class ClinicController extends Controller
         $adminEmail = "admin_" . Str::slug($request->input("name"), "_") . "@gmail.com";
         $userAdmin = User::create([
             "email" => $adminEmail,
-            "password" => bcrypt($request->input("password")),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -101,7 +101,7 @@ class ClinicController extends Controller
         $doctorEmail = "doctor_" . Str::slug($request->input("name"), "_") . "@gmail.com";
         $userDoctor = User::create([
             "email" => $doctorEmail,
-            "password" => bcrypt($request->input("password")),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -138,7 +138,7 @@ class ClinicController extends Controller
         $csrEmail = "csr_" . Str::slug($request->input("name"), "_") . "@gmail.com";
         $userCsr = User::create([
             "email" => $csrEmail,
-            "password" => bcrypt($request->input("password")),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
         $csrProfile = [
