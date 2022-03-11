@@ -538,4 +538,12 @@ class ClinicController extends Controller
             ->success()
             ->generate();
     }
+
+    public function getCovidServices($id) {
+        return customResponse()
+            ->data(Clinic::select(["accept_walk_in", "accept_covid_patient", "has_testing_center"])->where('id', $id)->get()->first())
+            ->message("Clinic covid services updated.")
+            ->success()
+            ->generate();
+    }
 }
