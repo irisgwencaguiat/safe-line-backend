@@ -65,6 +65,10 @@ Route::middleware("auth:api")
             ClinicController::class,
             "updateCovidPatient",
         ]);
+        Route::put("/covid/services", [
+            ClinicController::class,
+            "updateCovidServices",
+        ]);
     });
 
 Route::middleware("auth:api")

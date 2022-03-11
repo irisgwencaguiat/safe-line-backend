@@ -524,4 +524,18 @@ class ClinicController extends Controller
             ->success()
             ->generate();
     }
+
+    public function updateCovidServices(Request $request) {
+        Clinic::where("id", $request->input("clinic_id"))->update([
+            "accept_walk_in" => $request->input("accept_walk_in"),
+            "accept_covid_patient" => $request->input("accept_covid_patient"),
+            "has_testing_center" => $request->input("has_testing_center")
+        ]);
+
+        return customResponse()
+            ->data(Clinic::where("id", $request->input("clinic_id"))->get()->first())
+            ->message("Clinic covid services updated.")
+            ->success()
+            ->generate();
+    }
 }
