@@ -301,6 +301,7 @@ class AppointmentController extends Controller
             Appointment::where("id", $appointmentID)->update([
                 "appointment_time" => $request->input("time"),
                 "appointment_date" => $request->input("date"),
+                "type" => $request->input("type"),
             ]);
 
             return customResponse()
@@ -340,6 +341,7 @@ class AppointmentController extends Controller
                 "zoom_link" => $responseData["start_url"],
                 "appointment_time" => $request->input("time"),
                 "appointment_date" => $request->input("date"),
+                "type" => $request->input("type"),
             ]);
 
             return customResponse()
