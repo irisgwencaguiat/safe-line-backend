@@ -83,6 +83,8 @@ Route::middleware("auth:api")
     ->prefix("appointments")
     ->group(function () {
         Route::post("/", [AppointmentController::class, "createAppointment"]);
+        Route::put("/", [AppointmentController::class, "updateAppointment"]);
+        Route::delete("/{id}", [AppointmentController::class, "deleteAppointment"]);
         Route::post("/request", [
             AppointmentController::class,
             "requestAppointment",
@@ -98,6 +100,10 @@ Route::middleware("auth:api")
         Route::get("/doctor/{id}", [
             AppointmentController::class,
             "getDoctorAppointments",
+        ]);
+        Route::get("/clinic/{clinicID}", [
+            AppointmentController::class,
+            "getClinicAppointments",
         ]);
         Route::post("/sms", [AppointmentController::class, "testSms"]);
     });
