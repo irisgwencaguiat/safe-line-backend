@@ -118,6 +118,7 @@ Route::middleware("auth:api")
         ]);
         Route::get("/rooms/group", [ChatController::class, "fetchGroupRooms"]);
         Route::get("/{id}", [ChatController::class, "fetchChats"]);
+        Route::get("/rooms/latest/{roomID}", [ChatController::class, "getRoomLatestChat"]);
     });
 
 Route::middleware("auth:api")

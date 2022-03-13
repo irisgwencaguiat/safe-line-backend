@@ -12,6 +12,19 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
+    public function getRoomLatestChat($roomID) {
+        $room = Room::with(["lastChat", "clinic"])
+            ->where("id", $roomID)
+            ->get()
+            ->first();
+
+        return customResponse()
+            ->data($room)
+            ->message("Room with latest chat.")
+            ->success()
+            ->generate();
+    }
+
     public function createChat(CreateChat $request)
     {
         $chat =
@@ -28,11 +41,11 @@ class ChatController extends Controller
                     "message" => $request->input("message"),
                     "room_id" => $request->input("room_id"),
                 ]);
-        $newChat = Room::with(["lastChat", "clinic"])
+        $room = Room::with(["lastChat", "clinic"])
             ->where("id", $request->input("room_id"))
             ->get()
             ->first();
-        event(new \App\Events\CreateChat($request->input("room_id"), $newChat));
+        event(new \App\Events\CreateChat($request->input("room_id"), $room->id));
         return customResponse()
             ->data(true)
             ->message("Chat sent successfully.")
@@ -42,7 +55,7 @@ class ChatController extends Controller
 
     public function fetchDirectRooms(Request $request)
     {
-        $rooms = Room::with(["lastChat", "clinic"])
+        $rooms = Room::with(["roomMembers", "lastChat", "clinic"])
             ->whereHas("roomMembers", function ($query) use ($request) {
                 $query
                     ->where("user_id", Auth::id())
@@ -65,7 +78,7 @@ class ChatController extends Controller
 
     public function fetchGroupRooms(Request $request)
     {
-        $rooms = Room::with(["lastChat"])
+        $rooms = Room::with(["roomMembers", "lastChat"])
             ->whereHas("roomMembers", function ($query) use ($request) {
                 $query
                     ->where("user_id", Auth::id())
