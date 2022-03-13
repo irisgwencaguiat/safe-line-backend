@@ -264,16 +264,14 @@ class AppointmentController extends Controller
             ->generate();
     }
 
-    public function getPatientAppointments($id)
+    public function getPatientAppointments()
     {
-        $patientAppointments = AppointmentMember::with(["appointment"])
-            ->where("user_id", $id)
-            ->where("type", "patient")
-            ->orderBy("id", "DESC")
-            ->get();
+        $appointments = AppointmentMember::where("user_id", Auth::id())->with(["appointment" => function($q) {
+            return $q->with(["appointmentMembers"]);
+        }])->get()->pluck("appointment")->reject(null);
 
         return customResponse()
-            ->data($patientAppointments)
+            ->data($appointments)
             ->message("Get Patient Appointment is Successful.")
             ->success()
             ->generate();
@@ -281,14 +279,12 @@ class AppointmentController extends Controller
 
     public function getDoctorAppointments($id)
     {
-        $doctorAppointments = AppointmentMember::with(["appointment"])
-            ->where("user_id", $id)
-            ->where("type", "doctor")
-            ->orderBy("id", "DESC")
-            ->get();
+        $appointments = AppointmentMember::where("user_id", $id)->with(["appointment" => function($q) {
+            return $q->with(["appointmentMembers"]);
+        }])->get()->pluck("appointment")->reject(null);
 
         return customResponse()
-            ->data($doctorAppointments)
+            ->data($appointments)
             ->message("Get Doctor Appointment is Successful.")
             ->success()
             ->generate();

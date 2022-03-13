@@ -92,18 +92,18 @@ Route::middleware("auth:api")
         Route::get("/schedule/doctor/{id}", [
             AppointmentController::class,
             "getDoctorAppointmentSchedule",
-        ]);
-        Route::get("/patient/{id}", [
+        ]); // Used in doctor calendar
+        Route::get("/clinic/{clinicID}", [
             AppointmentController::class,
-            "getPatientAppointments",
+            "getClinicAppointments",
         ]);
         Route::get("/doctor/{id}", [
             AppointmentController::class,
             "getDoctorAppointments",
         ]);
-        Route::get("/clinic/{clinicID}", [
+        Route::get("/patient", [
             AppointmentController::class,
-            "getClinicAppointments",
+            "getPatientAppointments",
         ]);
         Route::post("/sms", [AppointmentController::class, "testSms"]);
     });

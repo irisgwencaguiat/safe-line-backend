@@ -78,7 +78,7 @@ class AuthenticationController extends Controller
         $accessToken = Auth::user()->createToken("authToken")->accessToken;
         return customResponse()
             ->data([
-                "user" => User::where("id", $user->id)
+                "user" => User::where("id", $user->id)->with(["clinicMember"])
                     ->get()
                     ->first(),
                 "access_token" => $accessToken,
@@ -103,7 +103,7 @@ class AuthenticationController extends Controller
                 ->generate();
         }
         $accessToken = Auth::user()->createToken("authToken")->accessToken;
-        $user = User::where("id", Auth::id())
+        $user = User::where("id", Auth::id())->with(["clinicMember"])
             ->get()
             ->first();
 
