@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             SymptomSeeder::class,
             PatientSeeder::class,
-            ClinicSeeder::class,
         ]);
     }
 }

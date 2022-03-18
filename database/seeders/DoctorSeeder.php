@@ -20,7 +20,7 @@ class DoctorSeeder extends Seeder
     {
         $clinicDoctorOne = User::create([
             "email" => "clinicdoctor1@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -51,7 +51,7 @@ class DoctorSeeder extends Seeder
 
         $clinicDoctorTwo = User::create([
             "email" => "clinicdoctor2@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -82,7 +82,7 @@ class DoctorSeeder extends Seeder
 
         $clinicDoctorThree = User::create([
             "email" => "clinicdoctor3@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -113,7 +113,7 @@ class DoctorSeeder extends Seeder
 
         $clinicDoctorFour = User::create([
             "email" => "clinicdoctor4@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -144,7 +144,7 @@ class DoctorSeeder extends Seeder
 
         $clinicDoctorFive = User::create([
             "email" => "clinicdoctor5@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -175,7 +175,7 @@ class DoctorSeeder extends Seeder
 
         $clinicDoctorSix = User::create([
             "email" => "clinicdoctor6@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 

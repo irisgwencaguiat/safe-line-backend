@@ -23,7 +23,7 @@ class ClinicSeeder extends Seeder
     {
         $clinicAdminOne = User::create([
             "email" => "clinicadmin1@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -85,7 +85,7 @@ class ClinicSeeder extends Seeder
 
         $clinicCsrOne = User::create([
             "email" => "cliniccsr1@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -116,7 +116,7 @@ class ClinicSeeder extends Seeder
 
         $clinicAdminTwo = User::create([
             "email" => "clinicadmin2@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -182,7 +182,7 @@ class ClinicSeeder extends Seeder
 
         $clinicCsrTwo = User::create([
             "email" => "cliniccsr2@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -213,7 +213,7 @@ class ClinicSeeder extends Seeder
 
         $clinicAdminThree = User::create([
             "email" => "clinicadmin3@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
@@ -275,7 +275,7 @@ class ClinicSeeder extends Seeder
 
         $clinicCsrThree = User::create([
             "email" => "cliniccsr3@gmail.com",
-            "password" => bcrypt("123456789"),
+            "password" => bcrypt("password"),
             "user_type" => "clinic_member",
         ]);
 
