@@ -132,6 +132,7 @@ class AppointmentController extends Controller
         // "2021-12-02T11:51:00Z"
         $appointmentTime = explode("T", $request->input("start_time"));
 
+
         if ($request->input("appointment_type") === "personal_visit") {
             $appointment = Appointment::create([
                 "type" => "personal_visit",
@@ -173,7 +174,7 @@ class AppointmentController extends Controller
             ];
 
             $responseData = Http::withHeaders([
-                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDc2MTIxMDcsImlhdCI6MTY0NzAwNzMwOX0.PFTPn7H2njHp0y_z89i7JzAUYyIovyrqJjSixVCJjnM",
+                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDgyNjI5MTYsImlhdCI6MTY0NzY1ODExOH0.50P_Xq46WvRbhIaGQ4yI14zB7V22d6MfRNZIn0gASFw",
                 "Content-Type" => "application/json",
                 "alg" => "HS256",
                 "typ" => "JWT",
