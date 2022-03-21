@@ -476,12 +476,7 @@ class ClinicController extends Controller
         ];
 
         $gotProfile = Profile::where('user_id', $clinicMember->user->id)->get()->first();
-
        Location::where('profile_id', $gotProfile->id)->update($newLocation);
-
-//        ClinicMember::where('user_id', $clinicMemberID)->update([
-//            "member_type" => $request->input("member_type"),
-//        ]);
 
         return customResponse()
             ->data(
@@ -494,6 +489,16 @@ class ClinicController extends Controller
             ->generate();
     }
 
+    public function deleteClinicMember($clinicMemberID)
+    {
+        $clinicMember = ClinicMember::where('id', $clinicMemberID);
+        $clinicMember->delete();
+        return customResponse()
+            ->data($clinicMember)
+            ->message("Clinic member is successfully deleted.")
+            ->success()
+            ->generate();
+    }
 
     public function getClinicMembers($id)
     {

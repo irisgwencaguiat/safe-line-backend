@@ -47,6 +47,10 @@ Route::middleware("auth:api")
             ClinicController::class,
             "updateClinicMember",
         ]);
+        Route::delete("/members/{clinicMemberID}", [
+            ClinicController::class,
+            "deleteClinicMember",
+        ]);
         Route::post("/services", [
             ClinicController::class,
             "CreateClinicService",
