@@ -26,6 +26,8 @@ Route::post("/developer/clinics", [ClinicController::class, "developerCreateClin
 Route::prefix("auth")->group(function () {
     Route::post("/signup", [AuthenticationController::class, "signup"]);
     Route::post("/login", [AuthenticationController::class, "login"]);
+    Route::post("/reset-password", [AuthenticationController::class, "sendPasswordResetLink"]);
+    Route::post("/reset/password", [AuthenticationController::class, "callResetPassword"]);
 });
 
 Route::middleware("auth:api")

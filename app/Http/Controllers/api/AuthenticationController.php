@@ -11,10 +11,19 @@ use App\Models\Profile;
 use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Password;
 
 class AuthenticationController extends Controller
 {
+
+    use SendsPasswordResetEmails;
+
     public function signup(CreateUser $request)
     {
         $path = $request->file("image")
@@ -135,4 +144,61 @@ class AuthenticationController extends Controller
             ->success()
             ->generate();
     }
+
+    public function sendPasswordResetLink(Request $request) {
+        if (empty($request->input("email"))) {
+            return customResponse()
+                ->data([])
+                ->message("E-mail is required")
+                ->unathorized()
+                ->generate();
+        }
+
+        $response = $this->broker()->sendResetLink(
+            $this->credentials($request)
+        );
+
+        if ($response == Password::RESET_LINK_SENT) {
+            return customResponse()
+                ->data($response)
+                ->message("Password reset link set to your email!")
+                ->success()
+                ->generate();
+        } else {
+            return customResponse()
+                ->data([])
+                ->message("E-mail not found.")
+                ->unathorized()
+                ->generate();
+        }
+    }
+
+
+    public function callResetPassword(Request $request) {
+        return $this->reset($request);
+    }
+
+    protected function resetPassword($user, $password) {
+        $user->password = Hash::make($password);
+        $user->save();
+
+        event(new PasswordReset($user));
+    }
+
+    protected function sendResetResponse(Request $request, $response) {
+        return customResponse()
+            ->data($response)
+            ->message("Password reset successfully.")
+            ->success()
+            ->generate();
+    }
+
+    protected function sendResetFailedResponse(Request $request, $response) {
+        return customResponse()
+            ->data([])
+            ->message("Failed, Invalid Token.")
+            ->unathorized()
+            ->generate();
+    }
+
 }

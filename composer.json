@@ -15,6 +15,7 @@
         "laravel/passport": "^10.1",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "laravel/ui": "^3.4",
         "nexmo/laravel": "^2.4",
         "pusher/pusher-php-server": "^7.0"
     },
