@@ -146,6 +146,7 @@ class AuthenticationController extends Controller
             return customResponse()
                 ->data([])
                 ->message("E-mail is required")
+                ->failed()
                 ->generate();
         }
 
