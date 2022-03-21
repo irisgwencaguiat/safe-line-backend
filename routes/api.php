@@ -43,6 +43,10 @@ Route::middleware("auth:api")
             ClinicController::class,
             "createClinicMember",
         ]);
+        Route::put("/members/{clinicMemberID}", [
+            ClinicController::class,
+            "updateClinicMember",
+        ]);
         Route::post("/services", [
             ClinicController::class,
             "CreateClinicService",

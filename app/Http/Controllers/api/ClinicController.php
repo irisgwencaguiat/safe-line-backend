@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Clinic\CreateClinic;
 use App\Http\Requests\Clinic\CreateClinicMember;
 use App\Http\Requests\Clinic\CreateClinicService;
+use App\Http\Requests\Clinic\UpdateClinicMember;
 use App\Http\Requests\Clinic\UpdateClinicStatus;
 use App\Http\Requests\Clinic\UploadClinicFiles;
 use App\Models\ClinicFile;
@@ -453,6 +454,42 @@ class ClinicController extends Controller
             ->success()
             ->generate();
     }
+
+    public function updateClinicMember($clinicMemberUserID, UpdateClinicMember $request)
+    {
+        $newProfile = [
+            "first_name" => $request->input("first_name"),
+            "last_name" => $request->input("last_name"),
+            "gender" => $request->input("gender"),
+            "birthday" => $request->input("birthday"),
+        ];
+
+       Profile::where('user_id', $clinicMemberUserID)->update($newProfile);
+        $newLocation = [
+            "address" => $request->input("address"),
+            "latitude" => $request->input("latitude"),
+            "longitude" => $request->input("longitude"),
+        ];
+
+        $gotProfile = Profile::where('user_id', $clinicMemberUserID)->get()->first();
+
+       Location::where('profile_id', $gotProfile->id)->update($newLocation);
+
+        ClinicMember::where('user_id', $clinicMemberUserID)->update([
+            "member_type" => $request->input("member_type"),
+        ]);
+
+        return customResponse()
+            ->data(
+                User::where("id", $clinicMemberUserID)
+                    ->get()
+                    ->first()
+            )
+            ->message("Clinic member is successfully updated.")
+            ->success()
+            ->generate();
+    }
+
 
     public function getClinicMembers($id)
     {
