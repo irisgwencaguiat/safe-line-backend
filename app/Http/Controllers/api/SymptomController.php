@@ -46,21 +46,9 @@ class SymptomController extends Controller
             "evidence" => $evidence,
         ];
 
-//        $recommendation = Http::withHeaders([
-//            "App-Id" => env("INFERMEDICA_APP_ID"),
-//            "App-Key" => env("INFERMEDICA_APP_KEY"),
-//            "Content-Type" => "application/json",
-//        ])
-//            ->post(
-//                "https://api.infermedica.com/v3/recommend_specialist",
-//                $requestBody
-//            )
-//            ->json();
-//
-
         $recommendation = Http::withHeaders([
-            "App-Id" => "7f74de40",
-            "App-Key" => "a9625103dce7d648fe50cbea89068bff",
+            "App-Id" => env("INFERMEDICA_APP_ID"),
+            "App-Key" => env("INFERMEDICA_APP_KEY"),
             "Content-Type" => "application/json",
         ])
             ->post(

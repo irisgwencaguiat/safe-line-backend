@@ -174,7 +174,7 @@ class AppointmentController extends Controller
             ];
 
             $responseData = Http::withHeaders([
-                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDgyNjI5MTYsImlhdCI6MTY0NzY1ODExOH0.50P_Xq46WvRbhIaGQ4yI14zB7V22d6MfRNZIn0gASFw",
+                "Authorization" => "Bearer " . env('ZOOM_APP_TOKEN'),
                 "Content-Type" => "application/json",
                 "alg" => "HS256",
                 "typ" => "JWT",
@@ -323,7 +323,7 @@ class AppointmentController extends Controller
             ];
 
             $responseData = Http::withHeaders([
-                "Authorization" => "Bearer " . "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxvNF9nZS1nU0c2eG1XR1NKQzZqbHciLCJleHAiOjE2NDc2MTIxMDcsImlhdCI6MTY0NzAwNzMwOX0.PFTPn7H2njHp0y_z89i7JzAUYyIovyrqJjSixVCJjnM",
+                "Authorization" => "Bearer " . env('ZOOM_APP_TOKEN'),
                 "Content-Type" => "application/json",
                 "alg" => "HS256",
                 "typ" => "JWT",
