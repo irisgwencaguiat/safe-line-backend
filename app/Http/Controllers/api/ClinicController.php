@@ -455,7 +455,7 @@ class ClinicController extends Controller
             ->generate();
     }
 
-    public function updateClinicMember($clinicMemberUserID, UpdateClinicMember $request)
+    public function updateClinicMember($clinicMemberID, UpdateClinicMember $request)
     {
         $newProfile = [
             "first_name" => $request->input("first_name"),
@@ -464,24 +464,28 @@ class ClinicController extends Controller
             "birthday" => $request->input("birthday"),
         ];
 
-       Profile::where('user_id', $clinicMemberUserID)->update($newProfile);
+        $clinicMember = ClinicMember::where('id', $clinicMemberID)->get()->first();
+        $clinicMember->member_type = $request->input("member_type");
+        $clinicMember->save();
+
+       Profile::where('user_id', $clinicMember->user->id)->update($newProfile);
         $newLocation = [
             "address" => $request->input("address"),
             "latitude" => $request->input("latitude"),
             "longitude" => $request->input("longitude"),
         ];
 
-        $gotProfile = Profile::where('user_id', $clinicMemberUserID)->get()->first();
+        $gotProfile = Profile::where('user_id', $clinicMember->user->id)->get()->first();
 
        Location::where('profile_id', $gotProfile->id)->update($newLocation);
 
-        ClinicMember::where('user_id', $clinicMemberUserID)->update([
-            "member_type" => $request->input("member_type"),
-        ]);
+//        ClinicMember::where('user_id', $clinicMemberID)->update([
+//            "member_type" => $request->input("member_type"),
+//        ]);
 
         return customResponse()
             ->data(
-                User::where("id", $clinicMemberUserID)
+                ClinicMember::where("id", $clinicMemberID)
                     ->get()
                     ->first()
             )
