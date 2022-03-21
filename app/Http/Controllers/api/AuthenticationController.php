@@ -14,15 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Password;
 
 class AuthenticationController extends Controller
 {
-
-    use SendsPasswordResetEmails;
 
     public function signup(CreateUser $request)
     {
@@ -150,11 +146,10 @@ class AuthenticationController extends Controller
             return customResponse()
                 ->data([])
                 ->message("E-mail is required")
-                ->unathorized()
                 ->generate();
         }
 
-        $response = $this->broker()->sendResetLink(
+        $response = Password::broker()->sendResetLink(
             $this->credentials($request)
         );
 
@@ -175,7 +170,43 @@ class AuthenticationController extends Controller
 
 
     public function callResetPassword(Request $request) {
-        return $this->reset($request);
+        $request->validate($this->rules());
+
+        $response = Password::broker()->reset(
+            $this->credentials($request), function ($user, $password) {
+            $this->resetPassword($user, $password);
+        }
+        );
+
+        if ($response == Password::PASSWORD_RESET) {
+            return customResponse()
+                ->data($response)
+                ->message("Password successfully reset.")
+                ->success()
+                ->generate();
+        } else {
+            return customResponse()
+                ->data([])
+                ->message("Invalid token.")
+                ->unathorized()
+                ->generate();
+        }
+    }
+
+    protected function rules()
+    {
+        return [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required'],
+        ];
+    }
+
+    protected function credentials(Request $request)
+    {
+        return $request->only(
+            'email', 'password', 'password_confirmation', 'token'
+        );
     }
 
     protected function resetPassword($user, $password) {
@@ -183,22 +214,6 @@ class AuthenticationController extends Controller
         $user->save();
 
         event(new PasswordReset($user));
-    }
-
-    protected function sendResetResponse(Request $request, $response) {
-        return customResponse()
-            ->data($response)
-            ->message("Password reset successfully.")
-            ->success()
-            ->generate();
-    }
-
-    protected function sendResetFailedResponse(Request $request, $response) {
-        return customResponse()
-            ->data([])
-            ->message("Failed, Invalid Token.")
-            ->unathorized()
-            ->generate();
     }
 
 }
