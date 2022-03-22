@@ -41,7 +41,7 @@ class SymptomController extends Controller
         $requestBody = [
             "sex" => $request->input("sex"),
             "age" => [
-                "value" => $request->input("age"),
+                "value" => 18,
             ],
             "evidence" => $evidence,
         ];
