@@ -5,6 +5,7 @@ use App\Http\Controllers\api\AuthenticationController;
 use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\ClinicController;
 use App\Http\Controllers\api\SymptomController;
+use App\Http\Controllers\api\UserContoller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,12 @@ Route::prefix("auth")->group(function () {
     Route::post("/login", [AuthenticationController::class, "login"]);
     Route::post("/reset-password", [AuthenticationController::class, "sendPasswordResetLink"]);
     Route::post("/reset/password", [AuthenticationController::class, "callResetPassword"]);
+});
+
+Route::middleware("auth:api")
+    ->prefix("users")
+    ->group(function () {
+        Route::put("/{id}", [UserContoller::class, "update"]);
 });
 
 Route::middleware("auth:api")
