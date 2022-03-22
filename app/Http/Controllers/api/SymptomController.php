@@ -46,6 +46,17 @@ class SymptomController extends Controller
             "evidence" => $evidence,
         ];
 
+//        $recommendation = Http::withHeaders([
+//            "App-Id" => env("INFERMEDICA_APP_ID"),
+//            "App-Key" => env("INFERMEDICA_APP_KEY"),
+//            "Content-Type" => "application/json",
+//        ])
+//            ->post(
+//                "https://api.infermedica.com/v3/recommend_specialist",
+//                $requestBody
+//            )
+//            ->json();
+
         $recommendation = Http::withHeaders([
             "App-Id" => env("INFERMEDICA_APP_ID"),
             "App-Key" => env("INFERMEDICA_APP_KEY"),
@@ -56,6 +67,7 @@ class SymptomController extends Controller
                 $requestBody
             )
             ->json();
+
 
 
         if ($recommendation["recommended_channel"] !== "personal_visit") {

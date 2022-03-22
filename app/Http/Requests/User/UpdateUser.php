@@ -29,8 +29,8 @@ class UpdateUser extends FormRequest
             "gender" => "required|string",
             "birthday" => "required",
             "address" => "required|string",
-            "latitude" => "required|string",
-            "longitude" => "required|string",
+            "latitude" => "required",
+            "longitude" => "required",
         ];
     }
 }
